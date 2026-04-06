@@ -12,7 +12,7 @@ const TYPES = [
   { value: "novel", label: "Novel" },
 ];
 
-export function TypeTabs() {
+export function TypeTabs({ basePath = "/" }: { basePath?: string }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const current = searchParams.get("type") ?? "all";
@@ -21,7 +21,7 @@ export function TypeTabs() {
     <Tabs value={current} onValueChange={(value) => {
       const params = new URLSearchParams(searchParams.toString());
       if (value === "all") { params.delete("type"); } else { params.set("type", value); }
-      router.push(`/?${params.toString()}`);
+      router.push(`${basePath}?${params.toString()}`);
     }}>
       <TabsList>
         {TYPES.map((t) => (<TabsTrigger key={t.value} value={t.value}>{t.label}</TabsTrigger>))}
