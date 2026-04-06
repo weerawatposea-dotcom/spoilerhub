@@ -1,10 +1,13 @@
 import { db } from "@/db";
-import { spoilers, series, users } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { spoilers, series, users, votes, comments as commentsTable } from "@/db/schema";
+import { eq, and } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { SpoilerReveal } from "@/components/spoiler-reveal";
+import { VoteButton } from "@/components/vote-button";
+import { CommentSection } from "@/components/comment-section";
+import { auth } from "@/lib/auth";
 import type { Metadata } from "next";
 
 interface Props { params: Promise<{ slug: string }> }
@@ -27,7 +30,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function SpoilerViewPage({ params }: Props) {
-  "use cache";
   const { slug } = await params;
 
   const [spoiler] = await db.select({
@@ -39,6 +41,20 @@ export default async function SpoilerViewPage({ params }: Props) {
     .innerJoin(users, eq(spoilers.authorId, users.id)).where(eq(spoilers.slug, slug)).limit(1);
 
   if (!spoiler) notFound();
+
+  const session = await auth();
+  let userVote: 1 | -1 | null = null;
+  if (session?.user) {
+    const [v] = await db.select({ value: votes.value }).from(votes)
+      .where(and(eq(votes.spoilerId, spoiler.id), eq(votes.userId, session.user.id))).limit(1);
+    userVote = (v?.value as 1 | -1) ?? null;
+  }
+
+  const commentList = await db.select({
+    id: commentsTable.id, content: commentsTable.content, createdAt: commentsTable.createdAt,
+    authorName: users.name, authorImage: users.image,
+  }).from(commentsTable).innerJoin(users, eq(commentsTable.authorId, users.id))
+    .where(eq(commentsTable.spoilerId, spoiler.id)).orderBy(commentsTable.createdAt);
 
   return (
     <div className="mx-auto max-w-3xl space-y-6">
@@ -53,6 +69,8 @@ export default async function SpoilerViewPage({ params }: Props) {
         </div>
       </div>
       <SpoilerReveal spoilerId={spoiler.id} seriesTitle={spoiler.seriesTitle} chapter={spoiler.chapter} />
+      <VoteButton spoilerId={spoiler.id} upvoteCount={spoiler.upvoteCount} userVote={userVote} />
+      <CommentSection spoilerId={spoiler.id} comments={commentList} isLoggedIn={!!session?.user} />
     </div>
   );
 }
