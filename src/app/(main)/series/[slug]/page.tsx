@@ -6,6 +6,7 @@ import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { SpoilerCard } from "@/components/spoiler-card";
 import { BookmarkButton } from "@/components/bookmark-button";
+import { Breadcrumbs } from "@/components/breadcrumbs";
 import { auth } from "@/lib/auth";
 import type { Metadata } from "next";
 
@@ -53,6 +54,11 @@ export default async function SeriesDetailPage({ params }: Props) {
 
   return (
     <div className="space-y-6">
+      <Breadcrumbs items={[
+        { label: "Home", href: "/" },
+        { label: s.type, href: `/browse?type=${s.type}` },
+        { label: s.title, href: `/series/${s.slug}` },
+      ]} />
       <div className="flex gap-6">
         {s.coverImage && <Image src={s.coverImage} alt={s.title} width={200} height={300} className="rounded-lg object-cover" />}
         <div className="flex-1 space-y-3">

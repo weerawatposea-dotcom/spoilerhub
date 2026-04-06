@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { SpoilerReveal } from "@/components/spoiler-reveal";
 import { VoteButton } from "@/components/vote-button";
 import { CommentSection } from "@/components/comment-section";
+import { Breadcrumbs } from "@/components/breadcrumbs";
 import { auth } from "@/lib/auth";
 import type { Metadata } from "next";
 
@@ -58,6 +59,11 @@ export default async function SpoilerViewPage({ params }: Props) {
 
   return (
     <div className="mx-auto max-w-3xl space-y-6">
+      <Breadcrumbs items={[
+        { label: "Home", href: "/" },
+        { label: spoiler.seriesTitle, href: `/series/${spoiler.seriesSlug}` },
+        { label: `Ch. ${spoiler.chapter}`, href: `/spoiler/${slug}` },
+      ]} />
       <div>
         <Link href={`/series/${spoiler.seriesSlug}`} className="text-sm text-primary hover:underline">{spoiler.seriesTitle}</Link>
         <h1 className="mt-1 text-2xl font-bold">{spoiler.title}</h1>

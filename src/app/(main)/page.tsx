@@ -4,6 +4,7 @@ import { desc, eq, sql } from "drizzle-orm";
 import { SpoilerCard } from "@/components/spoiler-card";
 import { TypeTabs } from "@/components/type-tabs";
 import { Suspense } from "react";
+import { JsonLd } from "@/components/json-ld";
 
 export default async function HomePage({ searchParams }: { searchParams: Promise<{ type?: string }> }) {
   "use cache";
@@ -28,6 +29,14 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
 
   return (
     <div className="space-y-6">
+      <JsonLd data={{
+        "@context": "https://schema.org", "@type": "WebSite", name: "SpoilerHub",
+        url: process.env.NEXT_PUBLIC_APP_URL,
+        potentialAction: { "@type": "SearchAction",
+          target: { "@type": "EntryPoint", urlTemplate: `${process.env.NEXT_PUBLIC_APP_URL}/browse?q={search_term_string}` },
+          "query-input": "required name=search_term_string",
+        },
+      }} />
       <div>
         <h1 className="text-2xl font-bold">Latest Spoilers</h1>
         <p className="text-muted-foreground text-sm">สปอยล์ตอนล่าสุดจากชุมชน</p>
