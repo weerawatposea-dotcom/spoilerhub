@@ -8,13 +8,14 @@ import {
 } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 import { notFound } from "next/navigation";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { Badge } from "@/components/ui/badge";
 import { SpoilerReveal } from "@/components/spoiler-reveal";
 import { VoteButton } from "@/components/vote-button";
 import { CommentSection } from "@/components/comment-section";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { auth } from "@/lib/auth";
+import { getTranslations } from "next-intl/server";
 
 export async function SpoilerContent({
   params,
@@ -44,6 +45,9 @@ export async function SpoilerContent({
   if (!spoiler) notFound();
 
   const session = await auth();
+  const t = await getTranslations("SpoilerDetail");
+  const tBreadcrumbs = await getTranslations("Breadcrumbs");
+
   let userVote: 1 | -1 | null = null;
   if (session?.user) {
     const [v] = await db
@@ -76,12 +80,12 @@ export async function SpoilerContent({
     <div className="mx-auto max-w-3xl space-y-6">
       <Breadcrumbs
         items={[
-          { label: "Home", href: "/" },
+          { label: tBreadcrumbs("home"), href: "/" },
           {
             label: spoiler.seriesTitle,
             href: `/series/${spoiler.seriesSlug}`,
           },
-          { label: `Ch. ${spoiler.chapter}`, href: `/spoiler/${slug}` },
+          { label: t("chapter", { chapter: spoiler.chapter }), href: `/spoiler/${slug}` },
         ]}
       />
       <div>
@@ -94,8 +98,8 @@ export async function SpoilerContent({
         <h1 className="mt-1 text-2xl font-bold">{spoiler.title}</h1>
         <div className="mt-2 flex items-center gap-3 text-sm text-muted-foreground">
           <Badge variant="secondary">{spoiler.seriesType}</Badge>
-          <span>Ch. {spoiler.chapter}</span>
-          <span>by {spoiler.authorName}</span>
+          <span>{t("chapter", { chapter: spoiler.chapter })}</span>
+          <span>{t("by", { author: spoiler.authorName })}</span>
           <span>+{spoiler.upvoteCount}</span>
         </div>
       </div>

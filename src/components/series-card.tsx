@@ -1,4 +1,7 @@
-import Link from "next/link";
+"use client";
+
+import { Link } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -6,6 +9,8 @@ import { Card, CardContent } from "@/components/ui/card";
 interface SeriesCardProps { slug: string; title: string; type: string; status: string; coverImage: string | null }
 
 export function SeriesCard({ slug, title, type, status, coverImage }: SeriesCardProps) {
+  const t = useTranslations("SeriesCard");
+
   return (
     <Link href={`/series/${slug}`}>
       <Card className="overflow-hidden transition-colors hover:bg-accent/50">
@@ -13,7 +18,7 @@ export function SeriesCard({ slug, title, type, status, coverImage }: SeriesCard
           {coverImage ? (
             <Image src={coverImage} alt={title} fill className="object-cover" />
           ) : (
-            <div className="flex h-full items-center justify-center bg-muted text-muted-foreground">No Image</div>
+            <div className="flex h-full items-center justify-center bg-muted text-muted-foreground">{t("noImage")}</div>
           )}
         </div>
         <CardContent className="p-3">

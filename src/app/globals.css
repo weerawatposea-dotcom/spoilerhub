@@ -117,8 +117,11 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
-/* Force dark theme as default */
+/* Color scheme matches active theme */
 :root {
+  color-scheme: light;
+}
+.dark {
   color-scheme: dark;
 }
 

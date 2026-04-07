@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { setRequestLocale, getTranslations } from "next-intl/server";
 import { PageLoading } from "@/components/loading";
 import { ProfileContent } from "./content";
 import type { Metadata } from "next";
@@ -7,11 +8,12 @@ import { users } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
 interface Props {
-  params: Promise<{ id: string }>;
+  params: Promise<{ locale: string; id: string }>;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
+  const t = await getTranslations("ProfilePage");
   const [user] = await db
     .select()
     .from(users)
@@ -19,12 +21,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     .limit(1);
   if (!user) return {};
   return {
-    title: `${user.name ?? "User"} — Profile`,
+    title: t("metaTitle", { name: user.name ?? "User" }),
     alternates: { canonical: `/profile/${id}` },
   };
 }
 
-export default function ProfilePage({ params }: Props) {
+export default async function ProfilePage({ params }: Props) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+
   return (
     <Suspense fallback={<PageLoading />}>
       <ProfileContent params={params} />

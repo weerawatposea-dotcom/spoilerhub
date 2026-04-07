@@ -5,6 +5,7 @@ import { SpoilerCard } from "@/components/spoiler-card";
 import { TypeTabs } from "@/components/type-tabs";
 import { JsonLd } from "@/components/json-ld";
 import { Suspense } from "react";
+import { getTranslations } from "next-intl/server";
 
 async function getLatestSpoilers(typeFilter?: string) {
   "use cache";
@@ -40,6 +41,7 @@ export async function HomeContent({
 }) {
   const params = await searchParams;
   const latestSpoilers = await getLatestSpoilers(params.type);
+  const t = await getTranslations("HomePage");
 
   return (
     <div className="space-y-6">
@@ -60,9 +62,9 @@ export async function HomeContent({
         }}
       />
       <div>
-        <h1 className="text-2xl font-bold">Latest Spoilers</h1>
+        <h1 className="text-2xl font-bold">{t("title")}</h1>
         <p className="text-muted-foreground text-sm">
-          สปอยล์ตอนล่าสุดจากชุมชน
+          {t("subtitle")}
         </p>
       </div>
       <Suspense fallback={null}>
@@ -85,7 +87,7 @@ export async function HomeContent({
         ))}
         {latestSpoilers.length === 0 && (
           <p className="py-12 text-center text-muted-foreground">
-            No spoilers yet. Be the first to write one!
+            {t("empty")}
           </p>
         )}
       </div>

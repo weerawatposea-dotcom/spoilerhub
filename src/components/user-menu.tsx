@@ -1,7 +1,8 @@
 "use client";
 
 import { signOut } from "next-auth/react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -21,6 +22,8 @@ interface UserMenuProps {
 }
 
 export function UserMenu({ user }: UserMenuProps) {
+  const t = useTranslations("UserMenu");
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
@@ -31,21 +34,21 @@ export function UserMenu({ user }: UserMenuProps) {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem asChild>
-          <Link href={`/profile/${user.id}`}>Profile</Link>
+          <Link href={`/profile/${user.id}`}>{t("profile")}</Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <Link href="/bookmarks">Bookmarks</Link>
+          <Link href="/bookmarks">{t("bookmarks")}</Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <Link href="/notifications">Notifications</Link>
+          <Link href="/notifications">{t("notifications")}</Link>
         </DropdownMenuItem>
         {user.role === "admin" && (
           <DropdownMenuItem asChild>
-            <Link href="/admin">Admin</Link>
+            <Link href="/admin">{t("admin")}</Link>
           </DropdownMenuItem>
         )}
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => signOut()}>Sign Out</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => signOut()}>{t("signOut")}</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

@@ -1,4 +1,7 @@
-import Link from "next/link";
+"use client";
+
+import { Link } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -24,6 +27,8 @@ const TYPE_COLORS: Record<string, string> = {
 };
 
 export function SpoilerCard({ slug, title, chapter, seriesTitle, seriesType, authorName, upvoteCount, commentCount, createdAt }: SpoilerCardProps) {
+  const t = useTranslations("SpoilerCard");
+
   return (
     <Link href={`/spoiler/${slug}`}>
       <Card className="transition-colors hover:bg-accent/50">
@@ -32,13 +37,13 @@ export function SpoilerCard({ slug, title, chapter, seriesTitle, seriesType, aut
             <div className="flex items-center gap-2">
               <Badge className={`${TYPE_COLORS[seriesType] ?? TYPE_COLORS.other} text-white text-xs`}>{seriesType}</Badge>
               <span className="text-sm font-medium truncate">{seriesTitle}</span>
-              <span className="text-xs text-muted-foreground">Ch. {chapter}</span>
+              <span className="text-xs text-muted-foreground">{t("chapter", { chapter })}</span>
             </div>
             <p className="mt-1 text-sm truncate">{title}</p>
             <div className="mt-1 flex items-center gap-3 text-xs text-muted-foreground">
-              <span>by {authorName ?? "Anonymous"}</span>
+              <span>{t("by", { author: authorName ?? t("anonymous") })}</span>
               <span>+{upvoteCount}</span>
-              <span>{commentCount} comments</span>
+              <span>{t("comments", { count: commentCount })}</span>
             </div>
           </div>
         </CardContent>

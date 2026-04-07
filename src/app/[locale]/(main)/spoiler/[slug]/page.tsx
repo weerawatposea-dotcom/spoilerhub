@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { setRequestLocale, getTranslations } from "next-intl/server";
 import { PageLoading } from "@/components/loading";
 import { SpoilerContent } from "./content";
 import type { Metadata } from "next";
@@ -7,11 +8,12 @@ import { spoilers, series } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
 interface Props {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ locale: string; slug: string }>;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
+  const t = await getTranslations("SpoilerDetail");
   const [spoiler] = await db
     .select({
       title: spoilers.title,
@@ -24,10 +26,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     .limit(1);
   if (!spoiler) return {};
   return {
-    title: `สปอยล์ ${spoiler.seriesTitle} ตอนที่ ${spoiler.chapter}`,
-    description: `${spoiler.title} — อ่านสปอยล์ ${spoiler.seriesTitle} ตอนที่ ${spoiler.chapter}`,
+    title: t("metaTitle", { series: spoiler.seriesTitle, chapter: spoiler.chapter }),
+    description: t("metaDescription", { title: spoiler.title, series: spoiler.seriesTitle, chapter: spoiler.chapter }),
     openGraph: {
-      title: `สปอยล์ ${spoiler.seriesTitle} ตอนที่ ${spoiler.chapter}`,
+      title: t("metaTitle", { series: spoiler.seriesTitle, chapter: spoiler.chapter }),
       description: spoiler.title,
       images: [
         `/api/og?title=${encodeURIComponent(spoiler.seriesTitle)}&chapter=${spoiler.chapter}`,
@@ -37,7 +39,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default function SpoilerViewPage({ params }: Props) {
+export default async function SpoilerViewPage({ params }: Props) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+
   return (
     <Suspense fallback={<PageLoading />}>
       <SpoilerContent params={params} />

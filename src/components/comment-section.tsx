@@ -1,6 +1,7 @@
 "use client";
 
 import { addComment } from "@/actions/comment";
+import { useTranslations } from "next-intl";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -10,6 +11,7 @@ interface Comment { id: string; content: string; createdAt: Date; authorName: st
 
 export function CommentSection({ spoilerId, comments, isLoggedIn }: { spoilerId: string; comments: Comment[]; isLoggedIn: boolean }) {
   const formRef = useRef<HTMLFormElement>(null);
+  const t = useTranslations("Comments");
 
   async function handleSubmit(formData: FormData) {
     await addComment(spoilerId, formData);
@@ -18,11 +20,11 @@ export function CommentSection({ spoilerId, comments, isLoggedIn }: { spoilerId:
 
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-semibold">Comments ({comments.length})</h3>
+      <h3 className="text-lg font-semibold">{t("heading", { count: comments.length })}</h3>
       {isLoggedIn && (
         <form ref={formRef} action={handleSubmit} className="space-y-2">
-          <Textarea name="content" placeholder="Write a comment..." rows={3} required />
-          <Button type="submit" size="sm">Post Comment</Button>
+          <Textarea name="content" placeholder={t("placeholder")} rows={3} required />
+          <Button type="submit" size="sm">{t("submit")}</Button>
         </form>
       )}
       <div className="space-y-3">

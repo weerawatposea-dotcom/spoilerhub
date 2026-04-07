@@ -1,6 +1,8 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
+import { useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const TYPES = [
@@ -15,6 +17,7 @@ const TYPES = [
 export function TypeTabs({ basePath = "/" }: { basePath?: string }) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const t = useTranslations("TypeTabs");
   const current = searchParams.get("type") ?? "all";
 
   return (
@@ -24,7 +27,7 @@ export function TypeTabs({ basePath = "/" }: { basePath?: string }) {
       router.push(`${basePath}?${params.toString()}`);
     }}>
       <TabsList>
-        {TYPES.map((t) => (<TabsTrigger key={t.value} value={t.value}>{t.label}</TabsTrigger>))}
+        {TYPES.map((tp) => (<TabsTrigger key={tp.value} value={tp.value}>{tp.value === "all" ? t("all") : tp.label}</TabsTrigger>))}
       </TabsList>
     </Tabs>
   );

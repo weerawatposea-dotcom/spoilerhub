@@ -5,8 +5,9 @@ import { SeriesCard } from "@/components/series-card";
 import { SearchBar } from "@/components/search-bar";
 import { TypeTabs } from "@/components/type-tabs";
 import { Badge } from "@/components/ui/badge";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { Suspense } from "react";
+import { getTranslations } from "next-intl/server";
 
 export async function BrowseContent({
   searchParams,
@@ -14,6 +15,7 @@ export async function BrowseContent({
   searchParams: Promise<{ q?: string; type?: string; genre?: string }>;
 }) {
   const { q, type, genre } = await searchParams;
+  const t = await getTranslations("BrowsePage");
   const conditions = [];
   if (q) conditions.push(ilike(series.title, `%${q}%`));
   if (type) conditions.push(eq(series.type, type as any));
@@ -46,7 +48,7 @@ export async function BrowseContent({
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Browse Series</h1>
+      <h1 className="text-2xl font-bold">{t("title")}</h1>
       <div className="space-y-4">
         <Suspense fallback={null}>
           <SearchBar />
@@ -69,7 +71,7 @@ export async function BrowseContent({
       </div>
       {seriesList.length === 0 ? (
         <p className="py-12 text-center text-muted-foreground">
-          No series found.
+          {t("noResults")}
         </p>
       ) : (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">

@@ -1,15 +1,30 @@
 import { signIn } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { getTranslations, setRequestLocale } from "next-intl/server";
+import { routing } from "@/i18n/routing";
 
-export default function LoginPage() {
+export function generateStaticParams() {
+  return routing.locales.map((locale) => ({ locale }));
+}
+
+export default async function LoginPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+
+  const t = await getTranslations("LoginPage");
+
   return (
     <div className="flex min-h-screen items-center justify-center">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Sign in to SpoilerHub</CardTitle>
+          <CardTitle className="text-2xl">{t("title")}</CardTitle>
           <p className="text-muted-foreground text-sm">
-            Join the community and share spoilers
+            {t("subtitle")}
           </p>
         </CardHeader>
         <CardContent className="space-y-3">
@@ -20,7 +35,7 @@ export default function LoginPage() {
             }}
           >
             <Button variant="outline" className="w-full" type="submit">
-              Continue with Google
+              {t("google")}
             </Button>
           </form>
           <form
@@ -30,7 +45,7 @@ export default function LoginPage() {
             }}
           >
             <Button variant="outline" className="w-full" type="submit">
-              Continue with Discord
+              {t("discord")}
             </Button>
           </form>
         </CardContent>

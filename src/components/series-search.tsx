@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import { Input } from "@/components/ui/input";
 
 interface SeriesOption {
@@ -13,6 +14,7 @@ export function SeriesSearch({ onSelect }: { onSelect: (series: SeriesOption) =>
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SeriesOption[]>([]);
   const [open, setOpen] = useState(false);
+  const t = useTranslations("BrowsePage");
 
   useEffect(() => {
     if (query.length < 2) {
@@ -33,7 +35,7 @@ export function SeriesSearch({ onSelect }: { onSelect: (series: SeriesOption) =>
   return (
     <div className="relative">
       <Input
-        placeholder="Search series..."
+        placeholder={t("searchPlaceholder")}
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         onFocus={() => results.length > 0 && setOpen(true)}

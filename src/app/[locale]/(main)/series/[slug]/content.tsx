@@ -15,6 +15,7 @@ import { SpoilerCard } from "@/components/spoiler-card";
 import { BookmarkButton } from "@/components/bookmark-button";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { auth } from "@/lib/auth";
+import { getTranslations } from "next-intl/server";
 
 export async function SeriesContent({
   params,
@@ -30,6 +31,8 @@ export async function SeriesContent({
   if (!s) notFound();
 
   const session = await auth();
+  const t = await getTranslations("SeriesDetail");
+  const tBreadcrumbs = await getTranslations("Breadcrumbs");
 
   const seriesGenreList = await db
     .select({ name: genres.name, slug: genres.slug })
@@ -77,7 +80,7 @@ export async function SeriesContent({
     <div className="space-y-6">
       <Breadcrumbs
         items={[
-          { label: "Home", href: "/" },
+          { label: tBreadcrumbs("home"), href: "/" },
           { label: s.type, href: `/browse?type=${s.type}` },
           { label: s.title, href: `/series/${s.slug}` },
         ]}
@@ -115,7 +118,7 @@ export async function SeriesContent({
       </div>
       <div>
         <h2 className="mb-3 text-lg font-semibold">
-          Spoilers ({spoilerList.length})
+          {t("spoilersHeading", { count: spoilerList.length })}
         </h2>
         <div className="space-y-2">
           {spoilerList.map((sp) => (

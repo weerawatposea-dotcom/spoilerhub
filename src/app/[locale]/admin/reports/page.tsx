@@ -6,9 +6,24 @@ import { resolveReport, dismissReport } from "@/actions/report";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { getTranslations, setRequestLocale } from "next-intl/server";
+import { routing } from "@/i18n/routing";
 
-export default async function AdminReportsPage() {
+export function generateStaticParams() {
+  return routing.locales.map((locale) => ({ locale }));
+}
+
+export default async function AdminReportsPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+
   await requireAdmin();
+  const t = await getTranslations("AdminReports");
+
   const allReports = await db.select({
     id: reports.id, targetType: reports.targetType, targetId: reports.targetId,
     reason: reports.reason, status: reports.status, createdAt: reports.createdAt, reporterName: users.name,
@@ -16,7 +31,7 @@ export default async function AdminReportsPage() {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-bold">Reports</h1>
+      <h1 className="text-2xl font-bold">{t("title")}</h1>
       {allReports.map((r) => (
         <Card key={r.id}>
           <CardContent className="flex items-center justify-between p-4">
@@ -26,12 +41,12 @@ export default async function AdminReportsPage() {
                 <Badge variant={r.status === "pending" ? "destructive" : "secondary"}>{r.status}</Badge>
               </div>
               <p className="mt-1 text-sm">{r.reason}</p>
-              <p className="text-xs text-muted-foreground">by {r.reporterName} — {new Date(r.createdAt).toLocaleDateString("th-TH")}</p>
+              <p className="text-xs text-muted-foreground">{t("by", { name: r.reporterName })} — {new Date(r.createdAt).toLocaleDateString("th-TH")}</p>
             </div>
             {r.status === "pending" && (
               <div className="flex gap-2">
-                <form action={resolveReport.bind(null, r.id)}><Button size="sm" type="submit">Resolve</Button></form>
-                <form action={dismissReport.bind(null, r.id)}><Button size="sm" variant="outline" type="submit">Dismiss</Button></form>
+                <form action={resolveReport.bind(null, r.id)}><Button size="sm" type="submit">{t("resolve")}</Button></form>
+                <form action={dismissReport.bind(null, r.id)}><Button size="sm" variant="outline" type="submit">{t("dismiss")}</Button></form>
               </div>
             )}
           </CardContent>

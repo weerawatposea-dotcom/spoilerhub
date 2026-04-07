@@ -10,6 +10,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { SpoilerCard } from "@/components/spoiler-card";
+import { getTranslations } from "next-intl/server";
 
 export async function ProfileContent({
   params,
@@ -23,6 +24,8 @@ export async function ProfileContent({
     .where(eq(users.id, userId))
     .limit(1);
   if (!user) notFound();
+
+  const t = await getTranslations("ProfilePage");
 
   const [spoilerCount] = await db
     .select({ count: count() })
@@ -68,9 +71,9 @@ export async function ProfileContent({
           </AvatarFallback>
         </Avatar>
         <div>
-          <h1 className="text-2xl font-bold">{user.name ?? "Anonymous"}</h1>
+          <h1 className="text-2xl font-bold">{user.name ?? t("anonymous")}</h1>
           <p className="text-sm text-muted-foreground">
-            Joined {new Date(user.createdAt).toLocaleDateString("th-TH")}
+            {t("joined", { date: new Date(user.createdAt).toLocaleDateString("th-TH") })}
           </p>
         </div>
       </div>
@@ -78,7 +81,7 @@ export async function ProfileContent({
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm text-muted-foreground">
-              Spoilers Written
+              {t("spoilersWritten")}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -88,7 +91,7 @@ export async function ProfileContent({
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm text-muted-foreground">
-              Total Upvotes
+              {t("totalUpvotes")}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -97,7 +100,7 @@ export async function ProfileContent({
         </Card>
       </div>
       <div>
-        <h2 className="mb-3 text-lg font-semibold">Recent Spoilers</h2>
+        <h2 className="mb-3 text-lg font-semibold">{t("recentSpoilers")}</h2>
         <div className="space-y-2">
           {userSpoilers.map((sp) => (
             <SpoilerCard
