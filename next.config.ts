@@ -15,6 +15,28 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "**" },
     ],
   },
+  headers: async () => [
+    {
+      // CDN cache public pages for 60s, stale-while-revalidate for 5 min
+      source: "/:locale(th|en)/:path*",
+      headers: [
+        {
+          key: "Cache-Control",
+          value: "public, s-maxage=60, stale-while-revalidate=300",
+        },
+      ],
+    },
+    {
+      // Cache API responses for 30s
+      source: "/api/:path*",
+      headers: [
+        {
+          key: "Cache-Control",
+          value: "public, s-maxage=30, stale-while-revalidate=60",
+        },
+      ],
+    },
+  ],
 };
 
 export default withNextIntl(nextConfig);
