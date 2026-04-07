@@ -23,6 +23,9 @@ const TYPE_COLORS: Record<string, string> = {
   manhua: "from-amber-600 to-amber-500",
   novel: "from-violet-600 to-violet-500",
   other: "from-slate-600 to-slate-500",
+  movie: "from-pink-600 to-pink-500",
+  tv_series: "from-cyan-600 to-cyan-500",
+  drama: "from-rose-600 to-rose-500",
 };
 
 const TYPE_GLOW: Record<string, string> = {
@@ -32,6 +35,9 @@ const TYPE_GLOW: Record<string, string> = {
   manhua: "group-hover:shadow-amber-500/20",
   novel: "group-hover:shadow-violet-500/20",
   other: "group-hover:shadow-slate-500/20",
+  movie: "group-hover:shadow-pink-500/20",
+  tv_series: "group-hover:shadow-cyan-500/20",
+  drama: "group-hover:shadow-rose-500/20",
 };
 
 export function SpoilerCard({

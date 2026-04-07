@@ -196,8 +196,9 @@ export async function fetchPopular(
  */
 export function mapToSeriesType(
   media: AniListMedia
-): "anime" | "manga" | "manhwa" | "manhua" | "novel" | "other" {
+): "anime" | "manga" | "manhwa" | "manhua" | "novel" | "movie" | "other" {
   if (media.format === "NOVEL") return "novel";
+  if (media.format === "MOVIE" || media.format === "SPECIAL") return "movie";
   switch (media.countryOfOrigin) {
     case "JP":
       return "manga";

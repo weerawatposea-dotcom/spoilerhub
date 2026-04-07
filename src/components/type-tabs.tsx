@@ -12,6 +12,9 @@ const TYPES = [
   { value: "manhwa", label: "Manhwa" },
   { value: "manhua", label: "Manhua" },
   { value: "novel", label: "Novel" },
+  { value: "movie", label: "Movie" },
+  { value: "tv_series", label: "TV Series" },
+  { value: "drama", label: "Drama" },
 ];
 
 export function TypeTabs({ basePath = "/" }: { basePath?: string }) {

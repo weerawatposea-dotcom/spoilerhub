@@ -78,6 +78,9 @@ const TYPE_DOT: Record<string, string> = {
   manhua: "bg-amber-500",
   novel: "bg-violet-500",
   other: "bg-slate-500",
+  movie: "bg-pink-500",
+  tv_series: "bg-cyan-500",
+  drama: "bg-rose-500",
 };
 
 // ─── Component ───────────────────────────────────

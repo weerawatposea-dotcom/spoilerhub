@@ -28,6 +28,9 @@ const TYPE_GRADIENT: Record<string, string> = {
   manhua: "from-amber-500/20 to-transparent",
   novel: "from-violet-500/20 to-transparent",
   other: "from-slate-500/20 to-transparent",
+  movie: "from-pink-500/20 to-transparent",
+  tv_series: "from-cyan-500/20 to-transparent",
+  drama: "from-rose-500/20 to-transparent",
 };
 
 const SPOILERS_PER_PAGE = 10;
