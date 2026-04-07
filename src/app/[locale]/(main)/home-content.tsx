@@ -6,9 +6,10 @@ import { TypeTabs } from "@/components/type-tabs";
 import { JsonLd } from "@/components/json-ld";
 import { Suspense } from "react";
 import { getTranslations } from "next-intl/server";
+import { cached } from "@/lib/cache";
 
 async function getLatestSpoilers(typeFilter?: string) {
-  return db
+  return cached(`home:spoilers:${typeFilter ?? "all"}`, 60, () => db
     .select({
       id: spoilers.id,
       slug: spoilers.slug,
@@ -29,7 +30,7 @@ async function getLatestSpoilers(typeFilter?: string) {
     .innerJoin(users, eq(spoilers.authorId, users.id))
     .where(typeFilter ? eq(series.type, typeFilter as any) : undefined)
     .orderBy(desc(spoilers.createdAt))
-    .limit(20);
+    .limit(20));
 }
 
 export async function HomeContent({

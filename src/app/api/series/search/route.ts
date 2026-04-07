@@ -2,6 +2,7 @@ import { db } from "@/db";
 import { series } from "@/db/schema";
 import { ilike } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
+import { cached } from "@/lib/cache";
 
 export async function GET(request: NextRequest) {
   const q = request.nextUrl.searchParams.get("q") ?? "";
@@ -10,11 +11,13 @@ export async function GET(request: NextRequest) {
     return NextResponse.json([]);
   }
 
-  const results = await db
-    .select({ id: series.id, title: series.title, type: series.type })
-    .from(series)
-    .where(ilike(series.title, `%${q}%`))
-    .limit(10);
+  const results = await cached(`search:${q.toLowerCase()}`, 120, () =>
+    db
+      .select({ id: series.id, title: series.title, type: series.type })
+      .from(series)
+      .where(ilike(series.title, `%${q}%`))
+      .limit(10)
+  );
 
   return NextResponse.json(results);
 }

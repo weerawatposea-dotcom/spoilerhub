@@ -1,6 +1,7 @@
 import { db } from "@/db";
 import { series, seriesGenres, genres } from "@/db/schema";
 import { eq, ilike, and, desc } from "drizzle-orm";
+import { cached } from "@/lib/cache";
 import { SeriesCard } from "@/components/series-card";
 import { SearchBar } from "@/components/search-bar";
 import { TypeTabs } from "@/components/type-tabs";
@@ -44,7 +45,9 @@ export async function BrowseContent({
     seriesList = seriesList.filter((s) => ids.has(s.id));
   }
 
-  const allGenres = await db.select().from(genres).orderBy(genres.name);
+  const allGenres = await cached("genres:all", 3600, () =>
+    db.select().from(genres).orderBy(genres.name)
+  );
 
   return (
     <div className="space-y-8">
