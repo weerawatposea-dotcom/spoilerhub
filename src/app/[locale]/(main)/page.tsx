@@ -6,9 +6,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { HomeContent } from "./home-content";
 import { Sidebar } from "@/components/sidebar";
 
-export function generateStaticParams() {
-  return routing.locales.map((locale) => ({ locale }));
-}
+// No generateStaticParams — this page queries DB so must render at request time
+// (Docker build has no DB access)
 
 function SidebarLoading() {
   return (

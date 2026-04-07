@@ -10,10 +10,6 @@ interface Props {
   searchParams: Promise<{ q?: string; type?: string; genre?: string }>;
 }
 
-export function generateStaticParams() {
-  return routing.locales.map((locale) => ({ locale }));
-}
-
 export async function generateMetadata({
   searchParams,
 }: Props): Promise<Metadata> {
