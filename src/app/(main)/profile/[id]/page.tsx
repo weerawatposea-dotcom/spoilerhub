@@ -17,7 +17,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function ProfilePage({ params }: Props) {
-  "use cache";
   const { id } = await params;
   const [user] = await db.select().from(users).where(eq(users.id, id)).limit(1);
   if (!user) notFound();
@@ -30,7 +29,7 @@ export default async function ProfilePage({ params }: Props) {
     chapter: spoilers.chapter, upvoteCount: spoilers.upvoteCount,
     createdAt: spoilers.createdAt, seriesTitle: series.title,
     seriesType: series.type, authorName: sql<string>`${user.name}`.as("authorName"),
-    commentCount: sql<number>`(SELECT COUNT(*) FROM comment WHERE comment."spoilerId" = spoiler.id)`.as("commentCount"),
+    commentCount: sql<number>`(SELECT COUNT(*) FROM comments WHERE comments.spoiler_id = spoilers.id)`.as("commentCount"),
   }).from(spoilers).innerJoin(series, eq(spoilers.seriesId, series.id))
     .where(eq(spoilers.authorId, id)).orderBy(desc(spoilers.createdAt)).limit(20);
 

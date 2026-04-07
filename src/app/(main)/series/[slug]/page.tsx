@@ -25,7 +25,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function SeriesDetailPage({ params }: Props) {
-  "use cache";
   const { slug } = await params;
   const [s] = await db.select().from(series).where(eq(series.slug, slug)).limit(1);
   if (!s) notFound();
@@ -41,7 +40,7 @@ export default async function SeriesDetailPage({ params }: Props) {
     chapter: spoilers.chapter, upvoteCount: spoilers.upvoteCount,
     createdAt: spoilers.createdAt, seriesTitle: sql<string>`${s.title}`.as("seriesTitle"),
     seriesType: sql<string>`${s.type}`.as("seriesType"), authorName: users.name,
-    commentCount: sql<number>`(SELECT COUNT(*) FROM comment WHERE comment."spoilerId" = spoiler.id)`.as("commentCount"),
+    commentCount: sql<number>`(SELECT COUNT(*) FROM comments WHERE comments.spoiler_id = spoilers.id)`.as("commentCount"),
   }).from(spoilers).innerJoin(users, eq(spoilers.authorId, users.id))
     .where(eq(spoilers.seriesId, s.id)).orderBy(desc(spoilers.createdAt));
 

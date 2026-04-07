@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Navbar } from "@/components/navbar";
+import { Suspense } from "react";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -22,7 +23,9 @@ export default function RootLayout({
   return (
     <html lang="th" className="dark">
       <body className={inter.className}>
-        <Navbar />
+        <Suspense fallback={<header className="border-b border-border bg-background sticky top-0 z-50 h-14" />}>
+          <Navbar />
+        </Suspense>
         <main className="mx-auto max-w-6xl px-4 py-6">{children}</main>
       </body>
     </html>
