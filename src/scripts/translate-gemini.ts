@@ -64,7 +64,7 @@ Synopsis: ${synopsis || "(none)"}`;
 
   try {
     const output = execSync(
-      `echo ${JSON.stringify(prompt)} | PATH="${NODE_PATH}:$PATH" "${GEMINI_PATH}" -m gemini-2.5-flash-preview-05-20 2>/dev/null`,
+      `echo ${JSON.stringify(prompt)} | PATH="${NODE_PATH}:$PATH" "${GEMINI_PATH}" -m gemini-3-flash-preview 2>/dev/null`,
       { encoding: "utf-8", timeout: 30000 }
     );
 
@@ -81,7 +81,7 @@ Synopsis: ${synopsis || "(none)"}`;
     // Fallback: try simpler translation
     try {
       const titleOutput = execSync(
-        `echo ${JSON.stringify(`Translate to Thai (just the translation, nothing else): ${title}`)} | PATH="${NODE_PATH}:$PATH" "${GEMINI_PATH}" -m gemini-2.5-flash-preview-05-20 2>/dev/null`,
+        `echo ${JSON.stringify(`Translate to Thai (just the translation, nothing else): ${title}`)} | PATH="${NODE_PATH}:$PATH" "${GEMINI_PATH}" -m gemini-3-flash-preview 2>/dev/null`,
         { encoding: "utf-8", timeout: 15000 }
       ).trim();
       return { titleTh: titleOutput || title, synopsisTh: null };
