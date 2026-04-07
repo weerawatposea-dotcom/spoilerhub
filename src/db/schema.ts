@@ -113,6 +113,8 @@ export const series = pgTable("series", {
   type: seriesTypeEnum("type").notNull(),
   coverImage: text("cover_image"),
   synopsis: text("synopsis"),
+  titleTh: text("title_th"),
+  synopsisTh: text("synopsis_th"),
   status: seriesStatusEnum("status").notNull(),
   createdAt: timestamp("created_at", { mode: "date" }).defaultNow(),
 });

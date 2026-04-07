@@ -15,7 +15,8 @@ import { SpoilerCard } from "@/components/spoiler-card";
 import { BookmarkButton } from "@/components/bookmark-button";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { auth } from "@/lib/auth";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, getLocale } from "next-intl/server";
+import { getLocalizedTitle, getLocalizedSynopsis } from "@/lib/locale-content";
 
 const TYPE_GRADIENT: Record<string, string> = {
   anime: "from-blue-500/20 to-transparent",
@@ -40,8 +41,12 @@ export async function SeriesContent({
   if (!s) notFound();
 
   const session = await auth();
+  const locale = await getLocale();
   const t = await getTranslations("SeriesDetail");
   const tBreadcrumbs = await getTranslations("Breadcrumbs");
+
+  const displayTitle = getLocalizedTitle(s, locale);
+  const displaySynopsis = getLocalizedSynopsis(s, locale);
 
   const seriesGenreList = await db
     .select({ name: genres.name, slug: genres.slug })
@@ -91,7 +96,7 @@ export async function SeriesContent({
         items={[
           { label: tBreadcrumbs("home"), href: "/" },
           { label: s.type, href: `/browse?type=${s.type}` },
-          { label: s.title, href: `/series/${s.slug}` },
+          { label: displayTitle, href: `/series/${s.slug}` },
         ]}
       />
 
@@ -121,7 +126,7 @@ export async function SeriesContent({
           <div className="flex flex-1 flex-col justify-center space-y-4">
             <div className="flex items-start justify-between gap-4">
               <h1 className="text-3xl font-bold tracking-tight md:text-4xl">
-                {s.title}
+                {displayTitle}
               </h1>
               {session?.user && (
                 <BookmarkButton seriesId={s.id} isBookmarked={isBookmarked} />
@@ -155,9 +160,9 @@ export async function SeriesContent({
               ))}
             </div>
 
-            {s.synopsis && (
+            {displaySynopsis && (
               <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground">
-                {s.synopsis}
+                {displaySynopsis}
               </p>
             )}
 
