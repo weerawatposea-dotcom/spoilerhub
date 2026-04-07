@@ -13,7 +13,6 @@ interface Props {
 }
 
 async function getSeriesForMeta(slug: string) {
-  "use cache";
   const [s] = await db.select().from(series).where(eq(series.slug, slug)).limit(1);
   return s ?? null;
 }

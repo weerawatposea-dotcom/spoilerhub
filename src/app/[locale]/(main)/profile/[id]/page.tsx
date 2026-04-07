@@ -13,7 +13,6 @@ interface Props {
 }
 
 async function getUserForMeta(id: string) {
-  "use cache";
   const [user] = await db.select().from(users).where(eq(users.id, id)).limit(1);
   return user ?? null;
 }

@@ -13,7 +13,6 @@ interface Props {
 }
 
 async function getSpoilerForMeta(slug: string) {
-  "use cache";
   const [spoiler] = await db
     .select({
       title: spoilers.title,

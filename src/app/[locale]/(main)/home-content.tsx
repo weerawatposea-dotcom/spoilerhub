@@ -8,8 +8,6 @@ import { Suspense } from "react";
 import { getTranslations } from "next-intl/server";
 
 async function getLatestSpoilers(typeFilter?: string) {
-  "use cache";
-
   return db
     .select({
       id: spoilers.id,

@@ -6,7 +6,7 @@ const withNextIntl = createNextIntlPlugin();
 const nextConfig: NextConfig = {
   output: "standalone",
   reactCompiler: true,
-  cacheComponents: true,
+  // cacheComponents: true, // disabled: PPR causes blank page on Railway (hydration fails)
   typescript: {
     ignoreBuildErrors: true,
   },
