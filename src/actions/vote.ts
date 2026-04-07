@@ -28,7 +28,7 @@ export async function vote(spoilerId: string, value: 1 | -1) {
       const [spoiler] = await db.select({ upvoteCount: spoilers.upvoteCount, authorId: spoilers.authorId })
         .from(spoilers).where(eq(spoilers.id, spoilerId)).limit(1);
       const milestones = [10, 50, 100, 500];
-      if (spoiler && milestones.includes(spoiler.upvoteCount) && spoiler.authorId !== session.user.id) {
+      if (spoiler && spoiler.upvoteCount && milestones.includes(spoiler.upvoteCount) && spoiler.authorId !== session.user.id) {
         await db.insert(notifications).values({
           userId: spoiler.authorId, type: "upvote", referenceType: "spoiler",
           referenceId: spoilerId, message: `Your spoiler reached ${spoiler.upvoteCount} upvotes!`,
