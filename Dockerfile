@@ -2,8 +2,8 @@
 FROM oven/bun:1.3 AS deps
 WORKDIR /app
 
-COPY package.json bun.lock ./
-RUN bun install --frozen-lockfile --production=false
+COPY package.json bun.lock* ./
+RUN bun install
 
 # ── Stage 2: Build ────────────────────────────────
 FROM oven/bun:1.3 AS builder
