@@ -5,6 +5,7 @@ import { votes, spoilers, notifications } from "@/db/schema";
 import { requireAuth } from "@/lib/auth-utils";
 import { and, eq, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import { invalidateCache } from "@/lib/cache";
 
 export async function vote(spoilerId: string, value: 1 | -1) {
   const session = await requireAuth();
@@ -36,5 +37,6 @@ export async function vote(spoilerId: string, value: 1 | -1) {
       }
     }
   }
+  invalidateCache("spoiler:*");
   revalidatePath(`/spoiler`);
 }

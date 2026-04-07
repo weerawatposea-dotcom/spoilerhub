@@ -7,6 +7,7 @@ import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createId } from "@paralleldrive/cuid2";
+import { invalidateCache } from "@/lib/cache";
 
 export async function createSpoiler(formData: FormData) {
   const session = await requireAuth();
@@ -52,6 +53,9 @@ export async function createSpoiler(formData: FormData) {
     );
   }
 
+  invalidateCache("home:*");
+  invalidateCache("series-spoilers:*");
+  invalidateCache("browse:*");
   revalidatePath("/");
   revalidatePath(`/series/${targetSeries.slug}`);
   redirect(`/spoiler/${slug}`);
@@ -72,5 +76,8 @@ export async function deleteSpoiler(id: string) {
   }
 
   await db.delete(spoilers).where(eq(spoilers.id, id));
+  invalidateCache("home:*");
+  invalidateCache("series-spoilers:*");
+  invalidateCache("browse:*");
   revalidatePath("/");
 }

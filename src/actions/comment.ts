@@ -5,6 +5,7 @@ import { comments, spoilers, notifications } from "@/db/schema";
 import { requireAuth } from "@/lib/auth-utils";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import { invalidateCache } from "@/lib/cache";
 
 export async function addComment(spoilerId: string, formData: FormData) {
   const session = await requireAuth();
@@ -20,6 +21,7 @@ export async function addComment(spoilerId: string, formData: FormData) {
       referenceId: spoilerId, message: `${session.user.name ?? "Someone"} commented on your spoiler`,
     });
   }
+  invalidateCache("spoiler-comments:*");
   revalidatePath(`/spoiler`);
 }
 
@@ -29,5 +31,6 @@ export async function deleteComment(commentId: string) {
   if (!comment) throw new Error("Comment not found");
   if (comment.authorId !== session.user.id && session.user.role !== "admin") throw new Error("Unauthorized");
   await db.delete(comments).where(eq(comments.id, commentId));
+  invalidateCache("spoiler-comments:*");
   revalidatePath(`/spoiler`);
 }

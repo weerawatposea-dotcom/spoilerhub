@@ -16,6 +16,7 @@ import { CommentSection } from "@/components/comment-section";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { auth } from "@/lib/auth";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { cached } from "@/lib/cache";
 
 export async function SpoilerContent({
   params,
@@ -24,24 +25,26 @@ export async function SpoilerContent({
 }) {
   const { locale, slug } = await params;
   setRequestLocale(locale);
-  const [spoiler] = await db
-    .select({
-      id: spoilers.id,
-      title: spoilers.title,
-      chapter: spoilers.chapter,
-      upvoteCount: spoilers.upvoteCount,
-      createdAt: spoilers.createdAt,
-      seriesTitle: series.title,
-      seriesSlug: series.slug,
-      seriesType: series.type,
-      authorName: users.name,
-      authorId: users.id,
-    })
-    .from(spoilers)
-    .innerJoin(series, eq(spoilers.seriesId, series.id))
-    .innerJoin(users, eq(spoilers.authorId, users.id))
-    .where(eq(spoilers.slug, slug))
-    .limit(1);
+  const [spoiler] = await cached(`spoiler:${slug}`, 300, () =>
+    db
+      .select({
+        id: spoilers.id,
+        title: spoilers.title,
+        chapter: spoilers.chapter,
+        upvoteCount: spoilers.upvoteCount,
+        createdAt: spoilers.createdAt,
+        seriesTitle: series.title,
+        seriesSlug: series.slug,
+        seriesType: series.type,
+        authorName: users.name,
+        authorId: users.id,
+      })
+      .from(spoilers)
+      .innerJoin(series, eq(spoilers.seriesId, series.id))
+      .innerJoin(users, eq(spoilers.authorId, users.id))
+      .where(eq(spoilers.slug, slug))
+      .limit(1)
+  );
 
   if (!spoiler) notFound();
 
@@ -64,18 +67,20 @@ export async function SpoilerContent({
     userVote = (v?.value as 1 | -1) ?? null;
   }
 
-  const commentList = await db
-    .select({
-      id: commentsTable.id,
-      content: commentsTable.content,
-      createdAt: commentsTable.createdAt,
-      authorName: users.name,
-      authorImage: users.image,
-    })
-    .from(commentsTable)
-    .innerJoin(users, eq(commentsTable.authorId, users.id))
-    .where(eq(commentsTable.spoilerId, spoiler.id))
-    .orderBy(commentsTable.createdAt);
+  const commentList = await cached(`spoiler-comments:${spoiler.id}`, 60, () =>
+    db
+      .select({
+        id: commentsTable.id,
+        content: commentsTable.content,
+        createdAt: commentsTable.createdAt,
+        authorName: users.name,
+        authorImage: users.image,
+      })
+      .from(commentsTable)
+      .innerJoin(users, eq(commentsTable.authorId, users.id))
+      .where(eq(commentsTable.spoilerId, spoiler.id))
+      .orderBy(commentsTable.createdAt)
+  );
 
   return (
     <div className="mx-auto max-w-3xl space-y-6">

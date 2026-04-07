@@ -4,14 +4,18 @@ import { desc, eq, sql, count } from "drizzle-orm";
 import { SpoilerCard } from "@/components/spoiler-card";
 import { SeriesCard } from "@/components/series-card";
 import { TypeTabs } from "@/components/type-tabs";
+import { Pagination } from "@/components/pagination";
 import { JsonLd } from "@/components/json-ld";
 import { Link } from "@/i18n/navigation";
 import { Suspense } from "react";
 import { getTranslations } from "next-intl/server";
 import { cached } from "@/lib/cache";
 
-async function getLatestSpoilers(typeFilter?: string) {
-  return cached(`home:spoilers:${typeFilter ?? "all"}`, 60, () =>
+const SPOILERS_PER_PAGE = 20;
+
+async function getLatestSpoilers(typeFilter?: string, page = 1) {
+  const offset = (page - 1) * SPOILERS_PER_PAGE;
+  return cached(`home:spoilers:${typeFilter ?? "all"}:p${page}`, 60, () =>
     db
       .select({
         id: spoilers.id,
@@ -33,8 +37,20 @@ async function getLatestSpoilers(typeFilter?: string) {
       .innerJoin(users, eq(spoilers.authorId, users.id))
       .where(typeFilter ? eq(series.type, typeFilter as any) : undefined)
       .orderBy(desc(spoilers.createdAt))
-      .limit(20)
+      .limit(SPOILERS_PER_PAGE)
+      .offset(offset)
   );
+}
+
+async function getSpoilerCount(typeFilter?: string) {
+  return cached(`home:spoilers-count:${typeFilter ?? "all"}`, 60, async () => {
+    const [result] = await db
+      .select({ count: count() })
+      .from(spoilers)
+      .innerJoin(series, eq(spoilers.seriesId, series.id))
+      .where(typeFilter ? eq(series.type, typeFilter as any) : undefined);
+    return result.count;
+  });
 }
 
 async function getTrendingSeries() {
@@ -72,14 +88,18 @@ async function getSeriesStats() {
 export async function HomeContent({
   searchParams,
 }: {
-  searchParams: Promise<{ type?: string }>;
+  searchParams: Promise<{ type?: string; page?: string }>;
 }) {
   const params = await searchParams;
-  const [latestSpoilers, trendingSeries, stats] = await Promise.all([
-    getLatestSpoilers(params.type),
-    getTrendingSeries(),
-    getSeriesStats(),
-  ]);
+  const page = Math.max(1, parseInt(params.page ?? "1", 10) || 1);
+  const [latestSpoilers, trendingSeries, stats, totalSpoilers] =
+    await Promise.all([
+      getLatestSpoilers(params.type, page),
+      getTrendingSeries(),
+      getSeriesStats(),
+      getSpoilerCount(params.type),
+    ]);
+  const totalPages = Math.ceil(totalSpoilers / SPOILERS_PER_PAGE);
   const t = await getTranslations("HomePage");
 
   return (
@@ -217,6 +237,10 @@ export async function HomeContent({
             </div>
           )}
         </div>
+
+        <Suspense fallback={null}>
+          <Pagination currentPage={page} totalPages={totalPages} />
+        </Suspense>
       </section>
     </div>
   );

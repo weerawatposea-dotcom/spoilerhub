@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/card";
 import { SpoilerCard } from "@/components/spoiler-card";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { cached } from "@/lib/cache";
 
 export async function ProfileContent({
   params,
@@ -19,48 +20,60 @@ export async function ProfileContent({
 }) {
   const { locale, id: userId } = await params;
   setRequestLocale(locale);
-  const [user] = await db
-    .select()
-    .from(users)
-    .where(eq(users.id, userId))
-    .limit(1);
+  const [user] = await cached(`profile:${userId}`, 300, () =>
+    db
+      .select()
+      .from(users)
+      .where(eq(users.id, userId))
+      .limit(1)
+  );
   if (!user) notFound();
 
   const t = await getTranslations("ProfilePage");
 
-  const [spoilerCount] = await db
-    .select({ count: count() })
-    .from(spoilers)
-    .where(eq(spoilers.authorId, userId));
+  const { spoilerCount, totalUpvotes } = await cached(
+    `profile-stats:${userId}`,
+    300,
+    async () => {
+      const [sc] = await db
+        .select({ count: count() })
+        .from(spoilers)
+        .where(eq(spoilers.authorId, userId));
 
-  const [totalUpvotes] = await db
-    .select({
-      total: sql<number>`COALESCE(SUM(${spoilers.upvoteCount}), 0)`,
-    })
-    .from(spoilers)
-    .where(eq(spoilers.authorId, userId));
+      const [tu] = await db
+        .select({
+          total: sql<number>`COALESCE(SUM(${spoilers.upvoteCount}), 0)`,
+        })
+        .from(spoilers)
+        .where(eq(spoilers.authorId, userId));
 
-  const userSpoilers = await db
-    .select({
-      id: spoilers.id,
-      slug: spoilers.slug,
-      title: spoilers.title,
-      chapter: spoilers.chapter,
-      upvoteCount: spoilers.upvoteCount,
-      createdAt: spoilers.createdAt,
-      seriesTitle: series.title,
-      seriesType: series.type,
-      authorName: sql<string>`${user.name}`.as("authorName"),
-      commentCount:
-        sql<number>`(SELECT COUNT(*) FROM comments WHERE comments.spoiler_id = spoilers.id)`.as(
-          "commentCount"
-        ),
-    })
-    .from(spoilers)
-    .innerJoin(series, eq(spoilers.seriesId, series.id))
-    .where(eq(spoilers.authorId, userId))
-    .orderBy(desc(spoilers.createdAt))
-    .limit(20);
+      return { spoilerCount: sc, totalUpvotes: tu };
+    }
+  );
+
+  const userSpoilers = await cached(`profile-spoilers:${userId}`, 60, () =>
+    db
+      .select({
+        id: spoilers.id,
+        slug: spoilers.slug,
+        title: spoilers.title,
+        chapter: spoilers.chapter,
+        upvoteCount: spoilers.upvoteCount,
+        createdAt: spoilers.createdAt,
+        seriesTitle: series.title,
+        seriesType: series.type,
+        authorName: sql<string>`${user.name}`.as("authorName"),
+        commentCount:
+          sql<number>`(SELECT COUNT(*) FROM comments WHERE comments.spoiler_id = spoilers.id)`.as(
+            "commentCount"
+          ),
+      })
+      .from(spoilers)
+      .innerJoin(series, eq(spoilers.seriesId, series.id))
+      .where(eq(spoilers.authorId, userId))
+      .orderBy(desc(spoilers.createdAt))
+      .limit(20)
+  );
 
   return (
     <div className="space-y-6">

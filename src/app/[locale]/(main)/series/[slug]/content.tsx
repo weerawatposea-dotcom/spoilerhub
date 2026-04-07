@@ -17,6 +17,7 @@ import { Breadcrumbs } from "@/components/breadcrumbs";
 import { auth } from "@/lib/auth";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { getLocalizedTitle, getLocalizedSynopsis } from "@/lib/locale-content";
+import { cached } from "@/lib/cache";
 
 const TYPE_GRADIENT: Record<string, string> = {
   anime: "from-blue-500/20 to-transparent",
@@ -34,11 +35,13 @@ export async function SeriesContent({
 }) {
   const { locale, slug } = await params;
   setRequestLocale(locale);
-  const [s] = await db
-    .select()
-    .from(series)
-    .where(eq(series.slug, slug))
-    .limit(1);
+  const [s] = await cached(`series:${slug}`, 300, () =>
+    db
+      .select()
+      .from(series)
+      .where(eq(series.slug, slug))
+      .limit(1)
+  );
   if (!s) notFound();
 
   const session = await auth();
@@ -48,32 +51,36 @@ export async function SeriesContent({
   const displayTitle = getLocalizedTitle(s, locale);
   const displaySynopsis = getLocalizedSynopsis(s, locale);
 
-  const seriesGenreList = await db
-    .select({ name: genres.name, slug: genres.slug })
-    .from(seriesGenres)
-    .innerJoin(genres, eq(seriesGenres.genreId, genres.id))
-    .where(eq(seriesGenres.seriesId, s.id));
+  const seriesGenreList = await cached(`series-genres:${s.id}`, 300, () =>
+    db
+      .select({ name: genres.name, slug: genres.slug })
+      .from(seriesGenres)
+      .innerJoin(genres, eq(seriesGenres.genreId, genres.id))
+      .where(eq(seriesGenres.seriesId, s.id))
+  );
 
-  const spoilerList = await db
-    .select({
-      id: spoilers.id,
-      slug: spoilers.slug,
-      title: spoilers.title,
-      chapter: spoilers.chapter,
-      upvoteCount: spoilers.upvoteCount,
-      createdAt: spoilers.createdAt,
-      seriesTitle: sql<string>`${s.title}`.as("seriesTitle"),
-      seriesType: sql<string>`${s.type}`.as("seriesType"),
-      authorName: users.name,
-      commentCount:
-        sql<number>`(SELECT COUNT(*) FROM comments WHERE comments.spoiler_id = spoilers.id)`.as(
-          "commentCount"
-        ),
-    })
-    .from(spoilers)
-    .innerJoin(users, eq(spoilers.authorId, users.id))
-    .where(eq(spoilers.seriesId, s.id))
-    .orderBy(desc(spoilers.createdAt));
+  const spoilerList = await cached(`series-spoilers:${s.id}`, 60, () =>
+    db
+      .select({
+        id: spoilers.id,
+        slug: spoilers.slug,
+        title: spoilers.title,
+        chapter: spoilers.chapter,
+        upvoteCount: spoilers.upvoteCount,
+        createdAt: spoilers.createdAt,
+        seriesTitle: sql<string>`${s.title}`.as("seriesTitle"),
+        seriesType: sql<string>`${s.type}`.as("seriesType"),
+        authorName: users.name,
+        commentCount:
+          sql<number>`(SELECT COUNT(*) FROM comments WHERE comments.spoiler_id = spoilers.id)`.as(
+            "commentCount"
+          ),
+      })
+      .from(spoilers)
+      .innerJoin(users, eq(spoilers.authorId, users.id))
+      .where(eq(spoilers.seriesId, s.id))
+      .orderBy(desc(spoilers.createdAt))
+  );
 
   let isBookmarked = false;
   if (session?.user) {
