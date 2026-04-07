@@ -2,7 +2,7 @@
   "Metadata": {
     "siteTitle": "SpoilerHub — Latest Anime Manga Manhwa Spoilers",
     "siteDescription": "Read the latest spoilers for anime, manga, manhwa, manhua, and novels with story summaries",
-    "templateTitle": "{title} | SpoilerHub"
+    "templateTitle": "%s | SpoilerHub"
   },
   "Navbar": {
     "brand": "SpoilerHub",

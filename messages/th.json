@@ -2,7 +2,7 @@
   "Metadata": {
     "siteTitle": "SpoilerHub — สปอยล์ anime manga manhwa ตอนล่าสุด",
     "siteDescription": "อ่านสปอยล์ anime manga manhwa manhua novel ตอนล่าสุด พร้อมสรุปเนื้อเรื่อง",
-    "templateTitle": "{title} | SpoilerHub"
+    "templateTitle": "%s | SpoilerHub"
   },
   "Navbar": {
     "brand": "SpoilerHub",
