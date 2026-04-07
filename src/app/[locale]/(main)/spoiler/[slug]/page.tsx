@@ -1,5 +1,6 @@
 import { Suspense } from "react";
-import { setRequestLocale, getTranslations } from "next-intl/server";
+import { getTranslations } from "next-intl/server";
+import { connection } from "next/server";
 import { PageLoading } from "@/components/loading";
 import { SpoilerContent } from "./content";
 import type { Metadata } from "next";
@@ -11,9 +12,8 @@ interface Props {
   params: Promise<{ locale: string; slug: string }>;
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug } = await params;
-  const t = await getTranslations("SpoilerDetail");
+async function getSpoilerForMeta(slug: string) {
+  "use cache";
   const [spoiler] = await db
     .select({
       title: spoilers.title,
@@ -24,6 +24,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     .innerJoin(series, eq(spoilers.seriesId, series.id))
     .where(eq(spoilers.slug, slug))
     .limit(1);
+  return spoiler ?? null;
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  const t = await getTranslations("SpoilerDetail");
+  const spoiler = await getSpoilerForMeta(slug);
   if (!spoiler) return {};
   return {
     title: t("metaTitle", { series: spoiler.seriesTitle, chapter: spoiler.chapter }),
@@ -39,13 +46,26 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default async function SpoilerViewPage({ params }: Props) {
-  const { locale } = await params;
-  setRequestLocale(locale);
+async function Connection() {
+  await connection();
+  return null;
+}
 
+function DynamicMarker() {
   return (
-    <Suspense fallback={<PageLoading />}>
-      <SpoilerContent params={params} />
+    <Suspense>
+      <Connection />
     </Suspense>
+  );
+}
+
+export default function SpoilerViewPage({ params }: Props) {
+  return (
+    <>
+      <DynamicMarker />
+      <Suspense fallback={<PageLoading />}>
+        <SpoilerContent params={params} />
+      </Suspense>
+    </>
   );
 }

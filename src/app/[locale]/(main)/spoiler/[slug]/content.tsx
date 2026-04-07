@@ -15,14 +15,15 @@ import { VoteButton } from "@/components/vote-button";
 import { CommentSection } from "@/components/comment-section";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { auth } from "@/lib/auth";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 
 export async function SpoilerContent({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ locale: string; slug: string }>;
 }) {
-  const { slug } = await params;
+  const { locale, slug } = await params;
+  setRequestLocale(locale);
   const [spoiler] = await db
     .select({
       id: spoilers.id,

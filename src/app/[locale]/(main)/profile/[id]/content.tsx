@@ -10,14 +10,15 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { SpoilerCard } from "@/components/spoiler-card";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 
 export async function ProfileContent({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: Promise<{ locale: string; id: string }>;
 }) {
-  const { id: userId } = await params;
+  const { locale, id: userId } = await params;
+  setRequestLocale(locale);
   const [user] = await db
     .select()
     .from(users)

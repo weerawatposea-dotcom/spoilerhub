@@ -1,14 +1,7 @@
-import { requireAuth } from "@/lib/auth-utils";
-import { db } from "@/db";
-import { bookmarks, series } from "@/db/schema";
-import { eq, desc } from "drizzle-orm";
-import { SeriesCard } from "@/components/series-card";
-import { getTranslations, setRequestLocale } from "next-intl/server";
-import { routing } from "@/i18n/routing";
-
-export function generateStaticParams() {
-  return routing.locales.map((locale) => ({ locale }));
-}
+import { Suspense } from "react";
+import { setRequestLocale } from "next-intl/server";
+import { PageLoading } from "@/components/loading";
+import { BookmarksContent } from "./content";
 
 export default async function BookmarksPage({
   params,
@@ -18,23 +11,9 @@ export default async function BookmarksPage({
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const session = await requireAuth();
-  const t = await getTranslations("BookmarksPage");
-  const myBookmarks = await db.select({
-    slug: series.slug, title: series.title, type: series.type, status: series.status, coverImage: series.coverImage,
-  }).from(bookmarks).innerJoin(series, eq(bookmarks.seriesId, series.id))
-    .where(eq(bookmarks.userId, session.user.id)).orderBy(desc(bookmarks.createdAt));
-
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold">{t("title")}</h1>
-      {myBookmarks.length === 0 ? (
-        <p className="text-muted-foreground">{t("empty")}</p>
-      ) : (
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-          {myBookmarks.map((s) => (<SeriesCard key={s.slug} {...s} />))}
-        </div>
-      )}
-    </div>
+    <Suspense fallback={<PageLoading />}>
+      <BookmarksContent />
+    </Suspense>
   );
 }

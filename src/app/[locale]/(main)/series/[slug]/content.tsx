@@ -15,7 +15,7 @@ import { SpoilerCard } from "@/components/spoiler-card";
 import { BookmarkButton } from "@/components/bookmark-button";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { auth } from "@/lib/auth";
-import { getTranslations, getLocale } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { getLocalizedTitle, getLocalizedSynopsis } from "@/lib/locale-content";
 
 const TYPE_GRADIENT: Record<string, string> = {
@@ -30,9 +30,10 @@ const TYPE_GRADIENT: Record<string, string> = {
 export async function SeriesContent({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ locale: string; slug: string }>;
 }) {
-  const { slug } = await params;
+  const { locale, slug } = await params;
+  setRequestLocale(locale);
   const [s] = await db
     .select()
     .from(series)
@@ -41,7 +42,6 @@ export async function SeriesContent({
   if (!s) notFound();
 
   const session = await auth();
-  const locale = await getLocale();
   const t = await getTranslations("SeriesDetail");
   const tBreadcrumbs = await getTranslations("Breadcrumbs");
 
