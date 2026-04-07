@@ -18,6 +18,9 @@ export const seriesTypeEnum = pgEnum("series_type", [
   "manhwa",
   "manhua",
   "novel",
+  "movie",
+  "tv_series",
+  "drama",
   "other",
 ]);
 
