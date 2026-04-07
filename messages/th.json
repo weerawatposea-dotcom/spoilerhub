@@ -1,0 +1,137 @@
+{
+  "Metadata": {
+    "siteTitle": "SpoilerHub — สปอยล์ anime manga manhwa ตอนล่าสุด",
+    "siteDescription": "อ่านสปอยล์ anime manga manhwa manhua novel ตอนล่าสุด พร้อมสรุปเนื้อเรื่อง",
+    "templateTitle": "{title} | SpoilerHub"
+  },
+  "Navbar": {
+    "brand": "SpoilerHub",
+    "browse": "สำรวจ",
+    "writeSpoiler": "เขียนสปอยล์",
+    "signIn": "เข้าสู่ระบบ"
+  },
+  "UserMenu": {
+    "profile": "โปรไฟล์",
+    "bookmarks": "บุ๊กมาร์ก",
+    "notifications": "แจ้งเตือน",
+    "admin": "จัดการ",
+    "signOut": "ออกจากระบบ"
+  },
+  "HomePage": {
+    "title": "สปอยล์ล่าสุด",
+    "subtitle": "สปอยล์ตอนล่าสุดจากชุมชน",
+    "empty": "ยังไม่มีสปอยล์ เขียนเป็นคนแรกเลย!"
+  },
+  "TypeTabs": {
+    "all": "ทั้งหมด"
+  },
+  "SpoilerCard": {
+    "chapter": "ตอนที่ {chapter}",
+    "by": "โดย {author}",
+    "anonymous": "ไม่ระบุชื่อ",
+    "comments": "{count} ความคิดเห็น"
+  },
+  "BrowsePage": {
+    "title": "สำรวจซีรีส์",
+    "searchPlaceholder": "ค้นหาซีรีส์...",
+    "noResults": "ไม่พบซีรีส์",
+    "metaTitle": "สปอยล์ {type} ยอดนิยม",
+    "metaTitleDefault": "สำรวจ — สปอยล์ทุกเรื่อง"
+  },
+  "SeriesDetail": {
+    "spoilersHeading": "สปอยล์ ({count})",
+    "metaTitle": "{title} สปอยล์ตอนล่าสุด",
+    "metaDescription": "อ่านสปอยล์ {title} ตอนล่าสุด"
+  },
+  "SpoilerDetail": {
+    "chapter": "ตอนที่ {chapter}",
+    "by": "โดย {author}",
+    "metaTitle": "สปอยล์ {series} ตอนที่ {chapter}",
+    "metaDescription": "{title} — อ่านสปอยล์ {series} ตอนที่ {chapter}"
+  },
+  "SpoilerReveal": {
+    "hiddenTitle": "เนื้อหาสปอยล์ถูกซ่อนไว้",
+    "hiddenSubtitle": "คลิกเพื่อเปิดสปอยล์ {series} ตอนที่ {chapter}",
+    "viewButton": "ดูสปอยล์",
+    "warningTitle": "คำเตือนสปอยล์",
+    "warningDescription": "คุณกำลังจะอ่านสปอยล์ {series} ตอนที่ {chapter} แน่ใจหรือไม่?",
+    "cancel": "ยกเลิก",
+    "confirm": "ใช่ เปิดเลย",
+    "loading": "กำลังโหลด..."
+  },
+  "Comments": {
+    "heading": "ความคิดเห็น ({count})",
+    "placeholder": "เขียนความคิดเห็น...",
+    "submit": "โพสต์"
+  },
+  "VoteButton": {
+    "upvote": "+",
+    "downvote": "-"
+  },
+  "BookmarkButton": {
+    "bookmarked": "บุ๊กมาร์กแล้ว",
+    "bookmark": "บุ๊กมาร์ก"
+  },
+  "SeriesCard": {
+    "noImage": "ไม่มีรูป"
+  },
+  "Breadcrumbs": {
+    "home": "หน้าแรก"
+  },
+  "BookmarksPage": {
+    "title": "บุ๊กมาร์กของฉัน",
+    "empty": "ยังไม่มีบุ๊กมาร์ก"
+  },
+  "NotificationsPage": {
+    "title": "แจ้งเตือน",
+    "markAllRead": "อ่านทั้งหมด",
+    "empty": "ไม่มีแจ้งเตือน"
+  },
+  "CreatePage": {
+    "title": "เขียนสปอยล์",
+    "seriesLabel": "ซีรีส์",
+    "chapterLabel": "ตอน / Episode",
+    "chapterPlaceholder": "เช่น 385",
+    "titleLabel": "หัวข้อ",
+    "titlePlaceholder": "หัวข้อสปอยล์สั้นๆ",
+    "contentLabel": "เนื้อหาสปอยล์ (Markdown)",
+    "contentPlaceholder": "เขียนสปอยล์ที่นี่...",
+    "submit": "โพสต์สปอยล์"
+  },
+  "LoginPage": {
+    "title": "เข้าสู่ระบบ SpoilerHub",
+    "subtitle": "เข้าร่วมชุมชนและแชร์สปอยล์",
+    "google": "ดำเนินการด้วย Google",
+    "discord": "ดำเนินการด้วย Discord"
+  },
+  "ProfilePage": {
+    "joined": "เข้าร่วม {date}",
+    "spoilersWritten": "สปอยล์ที่เขียน",
+    "totalUpvotes": "Upvotes ทั้งหมด",
+    "recentSpoilers": "สปอยล์ล่าสุด",
+    "anonymous": "ไม่ระบุชื่อ",
+    "metaTitle": "{name} — โปรไฟล์"
+  },
+  "AdminPage": {
+    "title": "แดชบอร์ดผู้ดูแล",
+    "addSeries": "เพิ่มซีรีส์",
+    "series": "ซีรีส์",
+    "spoilers": "สปอยล์",
+    "users": "ผู้ใช้",
+    "pendingReports": "รายงานที่รอดำเนินการ"
+  },
+  "AdminReports": {
+    "title": "รายงาน",
+    "resolve": "แก้ไข",
+    "dismiss": "ปัดทิ้ง",
+    "by": "โดย {name}"
+  },
+  "ThemeToggle": {
+    "light": "สว่าง",
+    "dark": "มืด"
+  },
+  "LocaleSwitcher": {
+    "th": "ไทย",
+    "en": "English"
+  }
+}

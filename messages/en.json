@@ -1,0 +1,137 @@
+{
+  "Metadata": {
+    "siteTitle": "SpoilerHub — Latest Anime Manga Manhwa Spoilers",
+    "siteDescription": "Read the latest spoilers for anime, manga, manhwa, manhua, and novels with story summaries",
+    "templateTitle": "{title} | SpoilerHub"
+  },
+  "Navbar": {
+    "brand": "SpoilerHub",
+    "browse": "Browse",
+    "writeSpoiler": "Write Spoiler",
+    "signIn": "Sign In"
+  },
+  "UserMenu": {
+    "profile": "Profile",
+    "bookmarks": "Bookmarks",
+    "notifications": "Notifications",
+    "admin": "Admin",
+    "signOut": "Sign Out"
+  },
+  "HomePage": {
+    "title": "Latest Spoilers",
+    "subtitle": "Latest spoilers from the community",
+    "empty": "No spoilers yet. Be the first to write one!"
+  },
+  "TypeTabs": {
+    "all": "All"
+  },
+  "SpoilerCard": {
+    "chapter": "Ch. {chapter}",
+    "by": "by {author}",
+    "anonymous": "Anonymous",
+    "comments": "{count} comments"
+  },
+  "BrowsePage": {
+    "title": "Browse Series",
+    "searchPlaceholder": "Search series...",
+    "noResults": "No series found.",
+    "metaTitle": "Popular {type} Spoilers",
+    "metaTitleDefault": "Browse — Explore All Spoilers"
+  },
+  "SeriesDetail": {
+    "spoilersHeading": "Spoilers ({count})",
+    "metaTitle": "{title} Latest Spoilers",
+    "metaDescription": "Read the latest spoilers for {title}"
+  },
+  "SpoilerDetail": {
+    "chapter": "Ch. {chapter}",
+    "by": "by {author}",
+    "metaTitle": "Spoiler: {series} Chapter {chapter}",
+    "metaDescription": "{title} — Read spoiler for {series} chapter {chapter}"
+  },
+  "SpoilerReveal": {
+    "hiddenTitle": "Spoiler content is hidden",
+    "hiddenSubtitle": "Click to reveal the spoiler for {series} Ch. {chapter}",
+    "viewButton": "View Spoiler",
+    "warningTitle": "Spoiler Warning",
+    "warningDescription": "You are about to read the spoiler for {series} chapter {chapter}. Are you sure?",
+    "cancel": "Cancel",
+    "confirm": "Yes, show me",
+    "loading": "Loading..."
+  },
+  "Comments": {
+    "heading": "Comments ({count})",
+    "placeholder": "Write a comment...",
+    "submit": "Post Comment"
+  },
+  "VoteButton": {
+    "upvote": "+",
+    "downvote": "-"
+  },
+  "BookmarkButton": {
+    "bookmarked": "Bookmarked",
+    "bookmark": "Bookmark"
+  },
+  "SeriesCard": {
+    "noImage": "No Image"
+  },
+  "Breadcrumbs": {
+    "home": "Home"
+  },
+  "BookmarksPage": {
+    "title": "My Bookmarks",
+    "empty": "No bookmarks yet."
+  },
+  "NotificationsPage": {
+    "title": "Notifications",
+    "markAllRead": "Mark all read",
+    "empty": "No notifications."
+  },
+  "CreatePage": {
+    "title": "Write a Spoiler",
+    "seriesLabel": "Series",
+    "chapterLabel": "Chapter / Episode",
+    "chapterPlaceholder": "e.g. 385",
+    "titleLabel": "Title",
+    "titlePlaceholder": "Brief spoiler headline",
+    "contentLabel": "Spoiler Content (Markdown)",
+    "contentPlaceholder": "Write your spoiler here...",
+    "submit": "Post Spoiler"
+  },
+  "LoginPage": {
+    "title": "Sign in to SpoilerHub",
+    "subtitle": "Join the community and share spoilers",
+    "google": "Continue with Google",
+    "discord": "Continue with Discord"
+  },
+  "ProfilePage": {
+    "joined": "Joined {date}",
+    "spoilersWritten": "Spoilers Written",
+    "totalUpvotes": "Total Upvotes",
+    "recentSpoilers": "Recent Spoilers",
+    "anonymous": "Anonymous",
+    "metaTitle": "{name} — Profile"
+  },
+  "AdminPage": {
+    "title": "Admin Dashboard",
+    "addSeries": "Add Series",
+    "series": "Series",
+    "spoilers": "Spoilers",
+    "users": "Users",
+    "pendingReports": "Pending Reports"
+  },
+  "AdminReports": {
+    "title": "Reports",
+    "resolve": "Resolve",
+    "dismiss": "Dismiss",
+    "by": "by {name}"
+  },
+  "ThemeToggle": {
+    "light": "Light",
+    "dark": "Dark"
+  },
+  "LocaleSwitcher": {
+    "th": "ไทย",
+    "en": "English"
+  }
+}
