@@ -47,8 +47,16 @@ export async function BrowseContent({
   const allGenres = await db.select().from(genres).orderBy(genres.name);
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold">{t("title")}</h1>
+    <div className="space-y-8">
+      {/* Header */}
+      <div className="space-y-1">
+        <h1 className="text-3xl font-bold tracking-tight">{t("title")}</h1>
+        <p className="text-sm text-muted-foreground">
+          {seriesList.length} series
+        </p>
+      </div>
+
+      {/* Filters */}
       <div className="space-y-4">
         <Suspense fallback={null}>
           <SearchBar />
@@ -56,12 +64,18 @@ export async function BrowseContent({
         <Suspense fallback={null}>
           <TypeTabs basePath="/browse" />
         </Suspense>
-        <div className="flex flex-wrap gap-2">
+
+        {/* Genre chips */}
+        <div className="flex flex-wrap gap-1.5">
           {allGenres.map((g) => (
             <Link key={g.id} href={`/browse?genre=${g.slug}`}>
               <Badge
                 variant={genre === g.slug ? "default" : "outline"}
-                className="cursor-pointer"
+                className={`cursor-pointer text-[11px] transition-all hover:scale-105 ${
+                  genre === g.slug
+                    ? "shadow-sm"
+                    : "hover:bg-muted"
+                }`}
               >
                 {g.name}
               </Badge>
@@ -69,14 +83,33 @@ export async function BrowseContent({
           ))}
         </div>
       </div>
+
+      {/* Results */}
       {seriesList.length === 0 ? (
-        <p className="py-12 text-center text-muted-foreground">
-          {t("noResults")}
-        </p>
+        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border/50 py-20 text-center">
+          <svg
+            className="h-12 w-12 text-muted-foreground/30"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1"
+          >
+            <circle cx="11" cy="11" r="8" />
+            <path d="m21 21-4.3-4.3" />
+            <path d="M8 11h6" />
+          </svg>
+          <p className="mt-4 text-sm text-muted-foreground">{t("noResults")}</p>
+        </div>
       ) : (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-          {seriesList.map((s) => (
-            <SeriesCard key={s.id} {...s} />
+          {seriesList.map((s, i) => (
+            <div
+              key={s.id}
+              style={{ animationDelay: `${i * 60}ms` }}
+              className="animate-in fade-in slide-in-from-bottom-3 fill-mode-both"
+            >
+              <SeriesCard {...s} />
+            </div>
           ))}
         </div>
       )}
