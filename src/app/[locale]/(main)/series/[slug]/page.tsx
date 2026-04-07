@@ -10,6 +10,7 @@ import { eq } from "drizzle-orm";
 
 interface Props {
   params: Promise<{ locale: string; slug: string }>;
+  searchParams: Promise<{ page?: string }>;
 }
 
 async function getSeriesForMeta(slug: string) {
@@ -47,12 +48,12 @@ function DynamicMarker() {
   );
 }
 
-export default function SeriesDetailPage({ params }: Props) {
+export default function SeriesDetailPage({ params, searchParams }: Props) {
   return (
     <>
       <DynamicMarker />
       <Suspense fallback={<SeriesDetailLoading />}>
-        <SeriesContent params={params} />
+        <SeriesContent params={params} searchParams={searchParams} />
       </Suspense>
     </>
   );

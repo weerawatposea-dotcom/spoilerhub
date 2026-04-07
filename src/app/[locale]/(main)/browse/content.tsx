@@ -1,6 +1,6 @@
 import { db } from "@/db";
 import { series, seriesGenres, genres } from "@/db/schema";
-import { eq, ilike, and, desc, count, inArray } from "drizzle-orm";
+import { eq, ilike, and, desc, count, inArray, type SQL } from "drizzle-orm";
 import { cached } from "@/lib/cache";
 import { SeriesCard } from "@/components/series-card";
 import { SearchBar } from "@/components/search-bar";
@@ -28,7 +28,7 @@ export async function BrowseContent({
   const offset = (page - 1) * SERIES_PER_PAGE;
   const t = await getTranslations("BrowsePage");
 
-  const conditions: ReturnType<typeof eq>[] = [];
+  const conditions: SQL[] = [];
   if (q) conditions.push(ilike(series.title, `%${q}%`));
   if (type) conditions.push(eq(series.type, type as any));
 
@@ -43,7 +43,8 @@ export async function BrowseContent({
     if (ids.length > 0) {
       conditions.push(inArray(series.id, ids));
     } else {
-      conditions.push(eq(series.id, -1));
+      // No series match the genre — use impossible condition
+      conditions.push(eq(series.id, "__no_match__"));
     }
   }
 

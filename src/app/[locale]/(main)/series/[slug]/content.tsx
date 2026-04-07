@@ -7,11 +7,13 @@ import {
   genres,
   bookmarks,
 } from "@/db/schema";
-import { eq, desc, sql, and } from "drizzle-orm";
+import { eq, desc, sql, and, count } from "drizzle-orm";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { SpoilerCard } from "@/components/spoiler-card";
+import { Pagination } from "@/components/pagination";
 import { BookmarkButton } from "@/components/bookmark-button";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { auth } from "@/lib/auth";
@@ -28,12 +30,19 @@ const TYPE_GRADIENT: Record<string, string> = {
   other: "from-slate-500/20 to-transparent",
 };
 
+const SPOILERS_PER_PAGE = 10;
+
 export async function SeriesContent({
   params,
+  searchParams,
 }: {
   params: Promise<{ locale: string; slug: string }>;
+  searchParams: Promise<{ page?: string }>;
 }) {
   const { locale, slug } = await params;
+  const { page: pageParam } = await searchParams;
+  const page = Math.max(1, parseInt(pageParam ?? "1", 10) || 1);
+  const offset = (page - 1) * SPOILERS_PER_PAGE;
   setRequestLocale(locale);
   const [s] = await cached(`series:${slug}`, 300, () =>
     db
@@ -59,28 +68,42 @@ export async function SeriesContent({
       .where(eq(seriesGenres.seriesId, s.id))
   );
 
-  const spoilerList = await cached(`series-spoilers:${s.id}`, 60, () =>
-    db
-      .select({
-        id: spoilers.id,
-        slug: spoilers.slug,
-        title: spoilers.title,
-        chapter: spoilers.chapter,
-        upvoteCount: spoilers.upvoteCount,
-        createdAt: spoilers.createdAt,
-        seriesTitle: sql<string>`${s.title}`.as("seriesTitle"),
-        seriesType: sql<string>`${s.type}`.as("seriesType"),
-        authorName: users.name,
-        commentCount:
-          sql<number>`(SELECT COUNT(*) FROM comments WHERE comments.spoiler_id = spoilers.id)`.as(
-            "commentCount"
-          ),
-      })
-      .from(spoilers)
-      .innerJoin(users, eq(spoilers.authorId, users.id))
-      .where(eq(spoilers.seriesId, s.id))
-      .orderBy(desc(spoilers.createdAt))
+  const [spoilerList, totalSpoilers] = await cached(
+    `series-spoilers:${s.id}:p${page}`,
+    60,
+    async () => {
+      const [list, countResult] = await Promise.all([
+        db
+          .select({
+            id: spoilers.id,
+            slug: spoilers.slug,
+            title: spoilers.title,
+            chapter: spoilers.chapter,
+            upvoteCount: spoilers.upvoteCount,
+            createdAt: spoilers.createdAt,
+            seriesTitle: sql<string>`${s.title}`.as("seriesTitle"),
+            seriesType: sql<string>`${s.type}`.as("seriesType"),
+            authorName: users.name,
+            commentCount:
+              sql<number>`(SELECT COUNT(*) FROM comments WHERE comments.spoiler_id = spoilers.id)`.as(
+                "commentCount"
+              ),
+          })
+          .from(spoilers)
+          .innerJoin(users, eq(spoilers.authorId, users.id))
+          .where(eq(spoilers.seriesId, s.id))
+          .orderBy(desc(spoilers.createdAt))
+          .limit(SPOILERS_PER_PAGE)
+          .offset(offset),
+        db
+          .select({ count: count() })
+          .from(spoilers)
+          .where(eq(spoilers.seriesId, s.id)),
+      ]);
+      return [list, countResult[0].count] as const;
+    }
   );
+  const totalPages = Math.ceil(totalSpoilers / SPOILERS_PER_PAGE);
 
   let isBookmarked = false;
   if (session?.user) {
@@ -180,7 +203,7 @@ export async function SeriesContent({
                   <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
                   <polyline points="14,2 14,8 20,8" />
                 </svg>
-                {spoilerList.length} spoilers
+                {totalSpoilers} spoilers
               </span>
             </div>
           </div>
@@ -190,7 +213,7 @@ export async function SeriesContent({
       {/* Spoiler List */}
       <div>
         <h2 className="mb-4 text-lg font-semibold">
-          {t("spoilersHeading", { count: spoilerList.length })}
+          {t("spoilersHeading", { count: totalSpoilers })}
         </h2>
         <div className="space-y-3">
           {spoilerList.map((sp) => (
@@ -208,6 +231,10 @@ export async function SeriesContent({
             />
           ))}
         </div>
+
+        <Suspense fallback={null}>
+          <Pagination currentPage={page} totalPages={totalPages} />
+        </Suspense>
       </div>
     </div>
   );
