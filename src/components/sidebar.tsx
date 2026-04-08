@@ -4,6 +4,7 @@ import { desc, eq, count, sql } from "drizzle-orm";
 import { Link } from "@/i18n/navigation";
 import { Badge } from "@/components/ui/badge";
 import { cached } from "@/lib/cache";
+import { connection } from "next/server";
 import Image from "next/image";
 
 // ─── Data fetchers ───────────────────────────────
@@ -86,6 +87,9 @@ const TYPE_DOT: Record<string, string> = {
 // ─── Component ───────────────────────────────────
 
 export async function Sidebar() {
+  // Signal to Next.js this component needs runtime data (prevents prerender in Docker)
+  await connection();
+
   const [topSpoilers, allGenres, contributors, recentSeries] =
     await Promise.all([
       getTopSpoilers(),

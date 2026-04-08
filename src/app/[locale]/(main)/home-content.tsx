@@ -1,6 +1,7 @@
 import { db } from "@/db";
 import { spoilers, series, users } from "@/db/schema";
 import { desc, eq, sql, count } from "drizzle-orm";
+import { connection } from "next/server";
 import { SpoilerCard } from "@/components/spoiler-card";
 import { SeriesCard } from "@/components/series-card";
 import { TypeTabs } from "@/components/type-tabs";
@@ -90,6 +91,7 @@ export async function HomeContent({
 }: {
   searchParams: Promise<{ type?: string; page?: string }>;
 }) {
+  await connection(); // Prevent prerender in Docker (no DB access at build time)
   const params = await searchParams;
   const page = Math.max(1, parseInt(params.page ?? "1", 10) || 1);
   const [latestSpoilers, trendingSeries, stats, totalSpoilers] =
