@@ -6,6 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useRef } from "react";
+import { RelativeTime } from "./relative-time";
 
 interface Comment { id: string; content: string; createdAt: Date; authorName: string | null; authorImage: string | null }
 
@@ -37,7 +38,7 @@ export function CommentSection({ spoilerId, comments, isLoggedIn }: { spoilerId:
             <div className="flex-1">
               <div className="flex items-center gap-2 text-sm">
                 <span className="font-medium">{c.authorName ?? "Anonymous"}</span>
-                <span className="text-xs text-muted-foreground">{new Date(c.createdAt).toLocaleDateString("th-TH")}</span>
+                <RelativeTime date={c.createdAt} className="text-xs text-muted-foreground" />
               </div>
               <p className="mt-1 text-sm">{c.content}</p>
             </div>

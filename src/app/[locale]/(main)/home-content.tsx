@@ -125,7 +125,7 @@ export async function HomeContent({
       />
 
       {/* Hero Section */}
-      <div className="relative overflow-hidden rounded-2xl border border-border/30 bg-gradient-to-br from-card via-card to-muted/30 p-8 dark:from-card dark:via-card dark:to-muted/10">
+      <div className="animate-fade-in-up relative overflow-hidden rounded-2xl border border-border/30 bg-gradient-to-br from-card via-card to-muted/30 p-8 dark:from-card dark:via-card dark:to-muted/10">
         <div className="pointer-events-none absolute inset-0 opacity-[0.03] dark:opacity-[0.06]">
           <svg className="h-full w-full" xmlns="http://www.w3.org/2000/svg">
             <defs>
@@ -167,14 +167,16 @@ export async function HomeContent({
       </div>
 
       {/* Weekly Updates */}
-      <Suspense fallback={null}>
-        <WeeklyUpdate />
-      </Suspense>
+      <div className="animate-fade-in-up" style={{ animationDelay: "100ms" }}>
+        <Suspense fallback={null}>
+          <WeeklyUpdate />
+        </Suspense>
+      </div>
 
       {/* Trending Series */}
       <section>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold flex items-center gap-2">
+          <h2 className="animate-fade-in-up text-lg font-semibold flex items-center gap-2" style={{ animationDelay: "200ms" }}>
             <svg className="h-5 w-5 text-red-500" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
             </svg>

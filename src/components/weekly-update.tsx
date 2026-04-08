@@ -1,11 +1,12 @@
 import { db } from "@/db";
 import { series } from "@/db/schema";
-import { desc, isNotNull, sql } from "drizzle-orm";
+import { desc, sql } from "drizzle-orm";
 import { Link } from "@/i18n/navigation";
 import { Badge } from "@/components/ui/badge";
 import { cached } from "@/lib/cache";
 import Image from "next/image";
 import { connection } from "next/server";
+import { RelativeTime } from "./relative-time";
 
 const TYPE_DOT: Record<string, string> = {
   anime: "bg-blue-500",
@@ -40,16 +41,6 @@ async function getWeeklyUpdates() {
   );
 }
 
-function formatDate(dateStr: string) {
-  try {
-    return new Date(dateStr).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-    });
-  } catch {
-    return dateStr;
-  }
-}
 
 export async function WeeklyUpdate() {
   await connection();
@@ -120,9 +111,7 @@ export async function WeeklyUpdate() {
                     className={`h-1.5 w-1.5 rounded-full ${TYPE_DOT[s.type] ?? TYPE_DOT.other}`}
                   />
                   {s.latestChapterDate && (
-                    <span className="text-[10px] text-muted-foreground">
-                      {formatDate(s.latestChapterDate)}
-                    </span>
+                    <RelativeTime date={s.latestChapterDate} className="text-[10px] text-muted-foreground" />
                   )}
                 </div>
               </div>
@@ -178,9 +167,7 @@ export async function WeeklyUpdate() {
                   className={`h-1.5 w-1.5 rounded-full ${TYPE_DOT[s.type] ?? TYPE_DOT.other}`}
                 />
                 {s.latestChapterDate && (
-                  <span className="text-[11px] text-muted-foreground">
-                    {formatDate(s.latestChapterDate)}
-                  </span>
+                  <RelativeTime date={s.latestChapterDate} className="text-[11px] text-muted-foreground" />
                 )}
               </div>
             </div>

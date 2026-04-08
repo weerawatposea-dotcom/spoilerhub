@@ -3,6 +3,7 @@
 import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { Badge } from "@/components/ui/badge";
+import { RelativeTime } from "./relative-time";
 
 interface SpoilerCardProps {
   slug: string;
@@ -49,6 +50,7 @@ export function SpoilerCard({
   authorName,
   upvoteCount,
   commentCount,
+  createdAt,
 }: SpoilerCardProps) {
   const t = useTranslations("SpoilerCard");
 
@@ -93,6 +95,7 @@ export function SpoilerCard({
               </svg>
               {t("comments", { count: commentCount })}
             </span>
+            <RelativeTime date={createdAt} className="text-muted-foreground" />
           </div>
         </div>
       </article>

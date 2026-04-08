@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { cached } from "@/lib/cache";
 import { connection } from "next/server";
 import Image from "next/image";
+import { RelativeTime } from "./relative-time";
 
 // ─── Data fetchers ───────────────────────────────
 
@@ -17,6 +18,7 @@ async function getTopSpoilers() {
         title: spoilers.title,
         chapter: spoilers.chapter,
         upvoteCount: spoilers.upvoteCount,
+        createdAt: spoilers.createdAt,
         seriesTitle: series.title,
         seriesType: series.type,
         seriesCover: series.coverImage,
@@ -140,6 +142,7 @@ export async function Sidebar() {
                 <p className="truncate text-[10px] text-muted-foreground">
                   Ch.{sp.chapter} · +{sp.upvoteCount}
                 </p>
+                <RelativeTime date={sp.createdAt} className="text-[10px] text-muted-foreground" />
               </div>
             </Link>
           ))}
