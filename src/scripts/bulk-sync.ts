@@ -43,6 +43,9 @@ async function upsertSeries(media: AniListMedia): Promise<"added" | "updated" | 
   const slug = slugify(title);
   if (!slug) return "skipped";
 
+  // Skip completed series — only ongoing content
+  if (media.status === "FINISHED") return "skipped";
+
   const [existing] = await db
     .select({ id: series.id })
     .from(series)

@@ -109,6 +109,9 @@ async function upsertSeries(media: AniListMedia & { episodes?: number }): Promis
   const slug = slugify(title);
   if (!slug) return "skipped";
 
+  // Skip completed series — only ongoing content
+  if (media.status === "FINISHED") return "skipped";
+
   const [existing] = await db.select({ id: series.id }).from(series).where(eq(series.slug, slug)).limit(1);
 
   // For anime, override type
