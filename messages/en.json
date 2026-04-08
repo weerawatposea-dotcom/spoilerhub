@@ -133,5 +133,13 @@
   "LocaleSwitcher": {
     "th": "ไทย",
     "en": "English"
+  },
+  "UniversalSearch": {
+    "placeholder": "Search series, spoilers...",
+    "seriesSection": "Series",
+    "spoilersSection": "Spoilers",
+    "noResults": "No results found",
+    "loading": "Searching...",
+    "searchLabel": "Search"
   }
 }

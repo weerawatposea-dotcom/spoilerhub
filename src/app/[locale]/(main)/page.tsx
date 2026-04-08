@@ -50,7 +50,7 @@ export default async function HomePage({
 
       {/* Sidebar — hidden on mobile, visible on lg+ */}
       <div className="w-full shrink-0 lg:w-72 xl:w-80">
-        <div className="lg:sticky lg:top-20">
+        <div className="lg:sticky lg:top-20 lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto lg:scrollbar-thin">
           <Suspense fallback={<SidebarLoading />}>
             <Sidebar />
           </Suspense>

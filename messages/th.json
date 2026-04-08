@@ -133,5 +133,13 @@
   "LocaleSwitcher": {
     "th": "ไทย",
     "en": "English"
+  },
+  "UniversalSearch": {
+    "placeholder": "ค้นหาซีรีส์ สปอยล์...",
+    "seriesSection": "ซีรีส์",
+    "spoilersSection": "สปอยล์",
+    "noResults": "ไม่พบผลลัพธ์",
+    "loading": "กำลังค้นหา...",
+    "searchLabel": "ค้นหา"
   }
 }
