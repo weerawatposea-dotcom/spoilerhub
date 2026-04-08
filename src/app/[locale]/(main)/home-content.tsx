@@ -4,6 +4,7 @@ import { desc, eq, sql, count } from "drizzle-orm";
 import { connection } from "next/server";
 import { SpoilerCard } from "@/components/spoiler-card";
 import { SeriesCard } from "@/components/series-card";
+import { WeeklyUpdate } from "@/components/weekly-update";
 import { TypeTabs } from "@/components/type-tabs";
 import { Pagination } from "@/components/pagination";
 import { JsonLd } from "@/components/json-ld";
@@ -164,6 +165,11 @@ export async function HomeContent({
           </div>
         </div>
       </div>
+
+      {/* Weekly Updates */}
+      <Suspense fallback={null}>
+        <WeeklyUpdate />
+      </Suspense>
 
       {/* Trending Series */}
       <section>
