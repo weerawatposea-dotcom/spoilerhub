@@ -45,7 +45,14 @@ $BUN run src/scripts/fetch-real-spoilers.ts --limit=50 2>&1 | tee -a "$LOG_FILE"
   echo "  ⚠ Real spoiler fetch failed, continuing..." | tee -a "$LOG_FILE"
 }
 
-# Step 3: Generate spoilers for series with < 5 spoilers
+# Step 3: Update latest chapter numbers from MangaDex + generate spoilers for latest chapters
+echo "" | tee -a "$LOG_FILE"
+echo "▶ Step 3: Update latest chapters (MangaDex)..." | tee -a "$LOG_FILE"
+$BUN run src/scripts/update-latest-chapters.ts --limit=100 2>&1 | tee -a "$LOG_FILE" || {
+  echo "  ⚠ Latest chapter update failed, continuing..." | tee -a "$LOG_FILE"
+}
+
+# Step 4: Generate spoilers for series with < 5 spoilers
 echo "" | tee -a "$LOG_FILE"
 echo "▶ Step 3: Generate spoilers for new series..." | tee -a "$LOG_FILE"
 $BUN run src/scripts/mass-generate-spoilers.ts --offset=0 --limit=100 --batch=cron 2>&1 | tee -a "$LOG_FILE" || {

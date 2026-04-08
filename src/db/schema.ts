@@ -118,6 +118,8 @@ export const series = pgTable("series", {
   synopsis: text("synopsis"),
   titleTh: text("title_th"),
   synopsisTh: text("synopsis_th"),
+  latestChapter: text("latest_chapter"),
+  latestChapterDate: text("latest_chapter_date"),
   status: seriesStatusEnum("status").notNull(),
   createdAt: timestamp("created_at", { mode: "date" }).defaultNow(),
 });
