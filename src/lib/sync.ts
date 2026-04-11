@@ -18,6 +18,7 @@ import {
   cleanDescription,
   type AniListMedia,
 } from "./anilist";
+import { uploadCoverFromUrl, coverExists } from "./minio";
 
 function slugify(text: string): string {
   return text
@@ -55,25 +56,47 @@ async function upsertSeries(media: AniListMedia): Promise<"added" | "updated" | 
     .where(eq(series.slug, slug))
     .limit(1);
 
+  const externalCover = media.coverImage.extraLarge || media.coverImage.large;
+
   const data = {
     title,
     slug,
     type: mapToSeriesType(media),
-    coverImage: media.coverImage.extraLarge || media.coverImage.large,
+    coverImage: externalCover,
     synopsis: cleanDescription(media.description),
     status: mapToStatus(media.status),
   };
 
   if (existing) {
-    // Update existing series
-    await db.update(series).set(data).where(eq(series.id, existing.id));
+    // Update existing series (don't overwrite MinIO cover with external URL)
+    const { coverImage: _, ...updateData } = data;
+    await db.update(series).set(updateData).where(eq(series.id, existing.id));
 
-    // Update genre links
+    // Upload cover to MinIO if not already there
+    if (externalCover && process.env.MINIO_ENDPOINT) {
+      try {
+        const existingCover = await coverExists(existing.id);
+        if (!existingCover) {
+          const minioUrl = await uploadCoverFromUrl(existing.id, externalCover);
+          await db.update(series).set({ coverImage: minioUrl }).where(eq(series.id, existing.id));
+        }
+      } catch { /* MinIO optional — don't fail sync */ }
+    }
+
     await syncGenres(existing.id, media.genres);
     return "updated";
   } else {
     // Insert new series
     const [newSeries] = await db.insert(series).values(data).returning();
+
+    // Upload cover to MinIO
+    if (externalCover && process.env.MINIO_ENDPOINT) {
+      try {
+        const minioUrl = await uploadCoverFromUrl(newSeries.id, externalCover);
+        await db.update(series).set({ coverImage: minioUrl }).where(eq(series.id, newSeries.id));
+      } catch { /* MinIO optional */ }
+    }
+
     await syncGenres(newSeries.id, media.genres);
     return "added";
   }

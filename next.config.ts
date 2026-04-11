@@ -12,7 +12,12 @@ const nextConfig: NextConfig = {
   },
   images: {
     remotePatterns: [
-      { protocol: "https", hostname: "**" },
+      // MinIO (our object storage)
+      { protocol: "https", hostname: "bucket-production-f7a2.up.railway.app" },
+      // AniList CDN (fallback for images not yet migrated)
+      { protocol: "https", hostname: "s4.anilist.co" },
+      // TMDB
+      { protocol: "https", hostname: "image.tmdb.org" },
     ],
   },
   headers: async () => [
