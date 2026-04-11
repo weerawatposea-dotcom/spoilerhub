@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 interface SeriesResult {
   id: string;
   title: string;
+  titleTh: string | null;
   type: string;
   slug: string;
   coverImage: string | null;
@@ -22,7 +23,12 @@ interface SpoilerResult {
   slug: string;
   chapter: string | null;
   seriesTitle: string;
+  seriesTitleTh: string | null;
   seriesSlug: string;
+}
+
+function locTitle(title: string, titleTh: string | null, locale: string) {
+  return locale === "th" && titleTh ? titleTh : title;
 }
 
 interface SearchResults {
@@ -48,6 +54,7 @@ const TYPE_DOT: Record<string, string> = {
 
 export function UniversalSearch() {
   const t = useTranslations("UniversalSearch");
+  const locale = useLocale();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResults | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -205,7 +212,7 @@ export function UniversalSearch() {
                         )}
                       </div>
                       <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-medium">{s.title}</p>
+                        <p className="truncate text-sm font-medium">{locTitle(s.title, s.titleTh, locale)}</p>
                         <div className="flex items-center gap-1.5 mt-0.5">
                           <span
                             className={`h-1.5 w-1.5 shrink-0 rounded-full ${TYPE_DOT[s.type] ?? TYPE_DOT.other}`}
@@ -236,7 +243,7 @@ export function UniversalSearch() {
                       <div className="min-w-0 flex-1">
                         <p className="truncate text-sm font-medium">{sp.title}</p>
                         <p className="truncate text-[10px] text-muted-foreground">
-                          {sp.seriesTitle}
+                          {locTitle(sp.seriesTitle, sp.seriesTitleTh, locale)}
                         </p>
                       </div>
                       {sp.chapter && (

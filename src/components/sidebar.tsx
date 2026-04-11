@@ -5,6 +5,8 @@ import { Link } from "@/i18n/navigation";
 import { Badge } from "@/components/ui/badge";
 import { cached } from "@/lib/cache";
 import { connection } from "next/server";
+import { getLocale } from "next-intl/server";
+import { getLocalizedTitle } from "@/lib/locale-content";
 import Image from "next/image";
 import { RelativeTime } from "./relative-time";
 
@@ -20,6 +22,7 @@ async function getTopSpoilers() {
         upvoteCount: spoilers.upvoteCount,
         createdAt: spoilers.createdAt,
         seriesTitle: series.title,
+        seriesTitleTh: series.titleTh,
         seriesType: series.type,
         seriesCover: series.coverImage,
       })
@@ -62,6 +65,7 @@ async function getRecentSeries() {
       .select({
         slug: series.slug,
         title: series.title,
+        titleTh: series.titleTh,
         type: series.type,
         coverImage: series.coverImage,
       })
@@ -91,6 +95,7 @@ const TYPE_DOT: Record<string, string> = {
 export async function Sidebar() {
   // Signal to Next.js this component needs runtime data (prevents prerender in Docker)
   await connection();
+  const locale = await getLocale();
 
   const [topSpoilers, allGenres, contributors, recentSeries] =
     await Promise.all([
@@ -137,7 +142,7 @@ export async function Sidebar() {
               </span>
               <div className="min-w-0 flex-1">
                 <p className="truncate text-xs font-medium group-hover:text-primary transition-colors">
-                  {sp.seriesTitle}
+                  {getLocalizedTitle({ title: sp.seriesTitle, titleTh: sp.seriesTitleTh }, locale)}
                 </p>
                 <p className="truncate text-[10px] text-muted-foreground">
                   Ch.{sp.chapter} · +{sp.upvoteCount}
@@ -176,7 +181,7 @@ export async function Sidebar() {
                 {s.coverImage ? (
                   <Image
                     src={s.coverImage}
-                    alt={s.title}
+                    alt={getLocalizedTitle(s, locale)}
                     fill
                     className="object-cover"
                     sizes="28px"
@@ -189,7 +194,7 @@ export async function Sidebar() {
               </div>
               <div className="min-w-0 flex-1">
                 <p className="truncate text-xs font-medium group-hover:text-primary transition-colors">
-                  {s.title}
+                  {getLocalizedTitle(s, locale)}
                 </p>
                 <div className="flex items-center gap-1">
                   <span

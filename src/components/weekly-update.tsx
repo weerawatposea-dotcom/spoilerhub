@@ -6,6 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { cached } from "@/lib/cache";
 import Image from "next/image";
 import { connection } from "next/server";
+import { getLocale } from "next-intl/server";
+import { getLocalizedTitle } from "@/lib/locale-content";
 import { RelativeTime } from "./relative-time";
 
 const TYPE_DOT: Record<string, string> = {
@@ -28,6 +30,7 @@ async function getWeeklyUpdates() {
         id: series.id,
         slug: series.slug,
         title: series.title,
+        titleTh: series.titleTh,
         type: series.type,
         coverImage: series.coverImage,
         latestChapter: series.latestChapter,
@@ -66,6 +69,7 @@ async function getWeeklyUpdates() {
 
 export async function WeeklyUpdate() {
   await connection();
+  const locale = await getLocale();
   const updates = await getWeeklyUpdates();
 
   if (updates.length === 0) return null;
@@ -106,7 +110,7 @@ export async function WeeklyUpdate() {
                 {s.coverImage ? (
                   <Image
                     src={s.coverImage}
-                    alt={s.title}
+                    alt={getLocalizedTitle(s, locale)}
                     fill
                     className="object-cover"
                   />
@@ -128,7 +132,7 @@ export async function WeeklyUpdate() {
               </div>
               <div className="min-w-0 flex-1 space-y-1">
                 <p className="truncate text-xs font-semibold leading-tight group-hover:text-primary transition-colors">
-                  {s.title}
+                  {getLocalizedTitle(s, locale)}
                 </p>
                 <Badge
                   variant="secondary"
@@ -162,7 +166,7 @@ export async function WeeklyUpdate() {
               {s.coverImage ? (
                 <Image
                   src={s.coverImage}
-                  alt={s.title}
+                  alt={getLocalizedTitle(s, locale)}
                   fill
                   className="object-cover"
                 />
@@ -184,7 +188,7 @@ export async function WeeklyUpdate() {
             </div>
             <div className="min-w-0 flex-1 space-y-1">
               <p className="truncate text-sm font-semibold leading-tight group-hover:text-primary transition-colors">
-                {s.title}
+                {getLocalizedTitle(s, locale)}
               </p>
               <Badge
                 variant="secondary"

@@ -9,7 +9,8 @@ import { Pagination } from "@/components/pagination";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "@/i18n/navigation";
 import { Suspense } from "react";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, getLocale } from "next-intl/server";
+import { getLocalizedTitle } from "@/lib/locale-content";
 
 const SERIES_PER_PAGE = 20;
 
@@ -26,6 +27,7 @@ export async function BrowseContent({
   const { q, type, genre, page: pageParam } = await searchParams;
   const page = Math.max(1, parseInt(pageParam ?? "1", 10) || 1);
   const offset = (page - 1) * SERIES_PER_PAGE;
+  const locale = await getLocale();
   const t = await getTranslations("BrowsePage");
 
   const conditions: SQL[] = [];
@@ -60,6 +62,7 @@ export async function BrowseContent({
           id: series.id,
           slug: series.slug,
           title: series.title,
+          titleTh: series.titleTh,
           type: series.type,
           status: series.status,
           coverImage: series.coverImage,
@@ -142,7 +145,7 @@ export async function BrowseContent({
               style={{ animationDelay: `${i * 60}ms` }}
               className="animate-in fade-in slide-in-from-bottom-3 fill-mode-both"
             >
-              <SeriesCard {...s} />
+              <SeriesCard {...s} title={getLocalizedTitle(s, locale)} />
             </div>
           ))}
         </div>

@@ -10,8 +10,9 @@ import { Pagination } from "@/components/pagination";
 import { JsonLd } from "@/components/json-ld";
 import { Link } from "@/i18n/navigation";
 import { Suspense } from "react";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, getLocale } from "next-intl/server";
 import { cached } from "@/lib/cache";
+import { getLocalizedTitle } from "@/lib/locale-content";
 
 const SPOILERS_PER_PAGE = 20;
 
@@ -27,6 +28,7 @@ async function getLatestSpoilers(typeFilter?: string, page = 1) {
         upvoteCount: spoilers.upvoteCount,
         createdAt: spoilers.createdAt,
         seriesTitle: series.title,
+        seriesTitleTh: series.titleTh,
         seriesType: series.type,
         authorName: users.name,
         commentCount:
@@ -63,6 +65,7 @@ async function getTrendingSeries() {
         id: series.id,
         slug: series.slug,
         title: series.title,
+        titleTh: series.titleTh,
         type: series.type,
         status: series.status,
         coverImage: series.coverImage,
@@ -83,6 +86,7 @@ async function getTrendingSeries() {
         series.id,
         series.slug,
         series.title,
+        series.titleTh,
         series.type,
         series.status,
         series.coverImage
@@ -124,6 +128,7 @@ export async function HomeContent({
       getSpoilerCount(params.type),
     ]);
   const totalPages = Math.ceil(totalSpoilers / SPOILERS_PER_PAGE);
+  const locale = await getLocale();
   const t = await getTranslations("HomePage");
 
   return (
@@ -217,7 +222,7 @@ export async function HomeContent({
               style={{ animationDelay: `${i * 60}ms` }}
               className="animate-in fade-in slide-in-from-bottom-3 fill-mode-both"
             >
-              <SeriesCard {...s} />
+              <SeriesCard {...s} title={getLocalizedTitle(s, locale)} />
             </div>
           ))}
         </div>
@@ -248,7 +253,7 @@ export async function HomeContent({
                 slug={sp.slug}
                 title={sp.title}
                 chapter={sp.chapter}
-                seriesTitle={sp.seriesTitle}
+                seriesTitle={getLocalizedTitle({ title: sp.seriesTitle, titleTh: sp.seriesTitleTh }, locale)}
                 seriesType={sp.seriesType}
                 authorName={sp.authorName}
                 upvoteCount={sp.upvoteCount}

@@ -15,8 +15,9 @@ import { VoteButton } from "@/components/vote-button";
 import { CommentSection } from "@/components/comment-section";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { auth } from "@/lib/auth";
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import { getTranslations, setRequestLocale, getLocale } from "next-intl/server";
 import { cached } from "@/lib/cache";
+import { getLocalizedTitle } from "@/lib/locale-content";
 
 export async function SpoilerContent({
   params,
@@ -34,6 +35,7 @@ export async function SpoilerContent({
         upvoteCount: spoilers.upvoteCount,
         createdAt: spoilers.createdAt,
         seriesTitle: series.title,
+        seriesTitleTh: series.titleTh,
         seriesSlug: series.slug,
         seriesType: series.type,
         authorName: users.name,
@@ -50,6 +52,7 @@ export async function SpoilerContent({
 
   const session = await auth();
   const t = await getTranslations("SpoilerDetail");
+  const localSeriesTitle = getLocalizedTitle({ title: spoiler.seriesTitle, titleTh: spoiler.seriesTitleTh }, locale);
   const tBreadcrumbs = await getTranslations("Breadcrumbs");
 
   let userVote: 1 | -1 | null = null;
@@ -88,7 +91,7 @@ export async function SpoilerContent({
         items={[
           { label: tBreadcrumbs("home"), href: "/" },
           {
-            label: spoiler.seriesTitle,
+            label: localSeriesTitle,
             href: `/series/${spoiler.seriesSlug}`,
           },
           { label: t("chapter", { chapter: spoiler.chapter }), href: `/spoiler/${slug}` },
@@ -99,7 +102,7 @@ export async function SpoilerContent({
           href={`/series/${spoiler.seriesSlug}`}
           className="text-sm text-primary hover:underline"
         >
-          {spoiler.seriesTitle}
+          {localSeriesTitle}
         </Link>
         <h1 className="mt-1 text-2xl font-bold">{spoiler.title}</h1>
         <div className="mt-2 flex items-center gap-3 text-sm text-muted-foreground">
@@ -111,7 +114,7 @@ export async function SpoilerContent({
       </div>
       <SpoilerReveal
         spoilerId={spoiler.id}
-        seriesTitle={spoiler.seriesTitle}
+        seriesTitle={localSeriesTitle}
         chapter={spoiler.chapter}
       />
       <VoteButton

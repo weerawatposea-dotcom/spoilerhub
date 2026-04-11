@@ -5,9 +5,9 @@
 
 interface LocalizableSeries {
   title: string;
-  synopsis: string | null;
-  titleTh: string | null;
-  synopsisTh: string | null;
+  synopsis?: string | null;
+  titleTh?: string | null;
+  synopsisTh?: string | null;
 }
 
 /**

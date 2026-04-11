@@ -1,6 +1,6 @@
 import { db } from "@/db";
 import { series, spoilers } from "@/db/schema";
-import { ilike, eq } from "drizzle-orm";
+import { ilike, eq, or } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 import { cached } from "@/lib/cache";
 
@@ -20,12 +20,13 @@ export async function GET(request: NextRequest) {
         .select({
           id: series.id,
           title: series.title,
+          titleTh: series.titleTh,
           slug: series.slug,
           type: series.type,
           coverImage: series.coverImage,
         })
         .from(series)
-        .where(ilike(series.title, `%${q}%`))
+        .where(or(ilike(series.title, `%${q}%`), ilike(series.titleTh, `%${q}%`)))
         .limit(5),
 
       // Search spoilers by title, join with series for seriesTitle + seriesSlug
@@ -36,6 +37,7 @@ export async function GET(request: NextRequest) {
           slug: spoilers.slug,
           chapter: spoilers.chapter,
           seriesTitle: series.title,
+          seriesTitleTh: series.titleTh,
           seriesSlug: series.slug,
         })
         .from(spoilers)

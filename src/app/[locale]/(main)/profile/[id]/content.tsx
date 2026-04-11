@@ -10,8 +10,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { SpoilerCard } from "@/components/spoiler-card";
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import { getTranslations, setRequestLocale, getLocale } from "next-intl/server";
 import { cached } from "@/lib/cache";
+import { getLocalizedTitle } from "@/lib/locale-content";
 
 export async function ProfileContent({
   params,
@@ -61,6 +62,7 @@ export async function ProfileContent({
         upvoteCount: spoilers.upvoteCount,
         createdAt: spoilers.createdAt,
         seriesTitle: series.title,
+        seriesTitleTh: series.titleTh,
         seriesType: series.type,
         authorName: sql<string>`${user.name}`.as("authorName"),
         commentCount:
@@ -122,7 +124,7 @@ export async function ProfileContent({
               slug={sp.slug}
               title={sp.title}
               chapter={sp.chapter}
-              seriesTitle={sp.seriesTitle}
+              seriesTitle={getLocalizedTitle({ title: sp.seriesTitle, titleTh: sp.seriesTitleTh }, locale)}
               seriesType={sp.seriesType}
               authorName={sp.authorName}
               upvoteCount={sp.upvoteCount}
