@@ -5,7 +5,7 @@ import { Link } from "@/i18n/navigation";
 import { Badge } from "@/components/ui/badge";
 import { cached } from "@/lib/cache";
 import { connection } from "next/server";
-import { getLocale } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { getLocalizedTitle } from "@/lib/locale-content";
 import Image from "next/image";
 import { RelativeTime } from "./relative-time";
@@ -96,6 +96,7 @@ export async function Sidebar() {
   // Signal to Next.js this component needs runtime data (prevents prerender in Docker)
   await connection();
   const locale = await getLocale();
+  const t = await getTranslations("Sidebar");
 
   const [topSpoilers, allGenres, contributors, recentSeries] =
     await Promise.all([
@@ -117,7 +118,7 @@ export async function Sidebar() {
           >
             <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
           </svg>
-          Top Spoilers
+          {t("topSpoilers")}
         </h3>
         <div className="space-y-2.5">
           {topSpoilers.map((sp, i) => (
@@ -167,7 +168,7 @@ export async function Sidebar() {
             <circle cx="12" cy="12" r="10" />
             <polyline points="12,6 12,12 16,14" />
           </svg>
-          Ongoing Series
+          {t("ongoingSeries")}
         </h3>
         <div className="space-y-2">
           {recentSeries.map((s) => (
@@ -223,7 +224,7 @@ export async function Sidebar() {
             <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
             <line x1="7" y1="7" x2="7.01" y2="7" />
           </svg>
-          Genres
+          {t("genres")}
         </h3>
         <div className="flex flex-wrap gap-1.5">
           {allGenres.map((g) => (
@@ -254,7 +255,7 @@ export async function Sidebar() {
             <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
             <path d="M16 3.13a4 4 0 0 1 0 7.75" />
           </svg>
-          Top Contributors
+          {t("topContributors")}
         </h3>
         <div className="space-y-2">
           {contributors.map((u, i) => (

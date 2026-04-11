@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { cached } from "@/lib/cache";
 import Image from "next/image";
 import { connection } from "next/server";
-import { getLocale } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { getLocalizedTitle } from "@/lib/locale-content";
 import { RelativeTime } from "./relative-time";
 
@@ -70,6 +70,7 @@ async function getWeeklyUpdates() {
 export async function WeeklyUpdate() {
   await connection();
   const locale = await getLocale();
+  const t = await getTranslations("HomePage");
   const updates = await getWeeklyUpdates();
 
   if (updates.length === 0) return null;
@@ -87,12 +88,12 @@ export async function WeeklyUpdate() {
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold flex items-center gap-2">
           <span>📅</span>
-          {isWeekly ? "Weekly Updates" : "Recent Updates"}
+          {isWeekly ? t("weeklyUpdates") : t("recentUpdates")}
           <Badge
             variant="secondary"
             className="ml-1 text-[11px] px-2 py-0.5 font-normal"
           >
-            {isWeekly ? "This Week" : "Recent"}
+            {isWeekly ? t("thisWeek") : t("recent")}
           </Badge>
         </h2>
       </div>
@@ -112,6 +113,7 @@ export async function WeeklyUpdate() {
                     src={s.coverImage}
                     alt={getLocalizedTitle(s, locale)}
                     fill
+                    sizes="48px"
                     className="object-cover"
                   />
                 ) : (

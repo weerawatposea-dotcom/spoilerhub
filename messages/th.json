@@ -20,7 +20,16 @@
   "HomePage": {
     "title": "สปอยล์ล่าสุด",
     "subtitle": "สปอยล์ตอนล่าสุดจากชุมชน",
-    "empty": "ยังไม่มีสปอยล์ เขียนเป็นคนแรกเลย!"
+    "empty": "ยังไม่มีสปอยล์ เขียนเป็นคนแรกเลย!",
+    "latestUpdates": "อัปเดตล่าสุด",
+    "trendingSeries": "ซีรีส์มาแรง",
+    "viewAll": "ดูทั้งหมด →",
+    "series": "ซีรีส์",
+    "spoilers": "สปอยล์",
+    "weeklyUpdates": "อัปเดตรายสัปดาห์",
+    "recentUpdates": "อัปเดตล่าสุด",
+    "thisWeek": "สัปดาห์นี้",
+    "recent": "ล่าสุด"
   },
   "TypeTabs": {
     "all": "ทั้งหมด"
@@ -125,6 +134,12 @@
     "resolve": "แก้ไข",
     "dismiss": "ปัดทิ้ง",
     "by": "โดย {name}"
+  },
+  "Sidebar": {
+    "topSpoilers": "สปอยล์ยอดนิยม",
+    "ongoingSeries": "ซีรีส์ที่กำลังออก",
+    "genres": "หมวดหมู่",
+    "topContributors": "ผู้ร่วมเขียนยอดนิยม"
   },
   "ThemeToggle": {
     "light": "สว่าง",

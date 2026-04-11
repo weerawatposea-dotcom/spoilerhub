@@ -11,6 +11,7 @@ interface SeriesCardProps {
   type: string;
   status: string;
   coverImage: string | null;
+  priority?: boolean;
 }
 
 const TYPE_DOT: Record<string, string> = {
@@ -31,6 +32,7 @@ export function SeriesCard({
   type,
   status,
   coverImage,
+  priority = false,
 }: SeriesCardProps) {
   const t = useTranslations("SeriesCard");
 
@@ -45,6 +47,8 @@ export function SeriesCard({
                 src={coverImage}
                 alt={title}
                 fill
+                sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 20vw"
+                priority={priority}
                 className="object-cover transition-transform duration-500 group-hover:scale-105"
               />
               {/* Gradient overlay on hover */}

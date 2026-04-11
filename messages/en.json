@@ -20,7 +20,16 @@
   "HomePage": {
     "title": "Latest Spoilers",
     "subtitle": "Latest spoilers from the community",
-    "empty": "No spoilers yet. Be the first to write one!"
+    "empty": "No spoilers yet. Be the first to write one!",
+    "latestUpdates": "LATEST UPDATES",
+    "trendingSeries": "Trending Series",
+    "viewAll": "View all →",
+    "series": "series",
+    "spoilers": "spoilers",
+    "weeklyUpdates": "Weekly Updates",
+    "recentUpdates": "Recent Updates",
+    "thisWeek": "This Week",
+    "recent": "Recent"
   },
   "TypeTabs": {
     "all": "All"
@@ -125,6 +134,12 @@
     "resolve": "Resolve",
     "dismiss": "Dismiss",
     "by": "by {name}"
+  },
+  "Sidebar": {
+    "topSpoilers": "Top Spoilers",
+    "ongoingSeries": "Ongoing Series",
+    "genres": "Genres",
+    "topContributors": "Top Contributors"
   },
   "ThemeToggle": {
     "light": "Light",

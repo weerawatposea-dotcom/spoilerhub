@@ -170,7 +170,7 @@ export async function HomeContent({
             <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
               <path d="M13.5 2c-5.621 0-10.211 4.443-10.484 10h-3.016l5 6.625 5-6.625h-2.937c.272-3.894 3.512-7 7.437-7 4.141 0 7.5 3.359 7.5 7.5s-3.359 7.5-7.5 7.5a7.462 7.462 0 0 1-4.798-1.74l-1.489 1.483A9.964 9.964 0 0 0 13.5 22c5.523 0 10-4.477 10-10s-4.477-10-10-10z" />
             </svg>
-            LATEST UPDATES
+            {t("latestUpdates")}
           </div>
           <h1 className="mt-3 text-3xl font-bold tracking-tight md:text-4xl">
             {t("title")}
@@ -182,11 +182,11 @@ export async function HomeContent({
           <div className="mt-4 flex gap-6 text-sm">
             <div>
               <span className="text-2xl font-bold">{stats.series}</span>
-              <span className="ml-1.5 text-muted-foreground">series</span>
+              <span className="ml-1.5 text-muted-foreground">{t("series")}</span>
             </div>
             <div>
               <span className="text-2xl font-bold">{stats.spoilers}</span>
-              <span className="ml-1.5 text-muted-foreground">spoilers</span>
+              <span className="ml-1.5 text-muted-foreground">{t("spoilers")}</span>
             </div>
           </div>
         </div>
@@ -206,13 +206,13 @@ export async function HomeContent({
             <svg className="h-5 w-5 text-red-500" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
             </svg>
-            Trending Series
+            {t("trendingSeries")}
           </h2>
           <Link
             href="/browse"
             className="text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
-            View all →
+            {t("viewAll")}
           </Link>
         </div>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
@@ -222,7 +222,7 @@ export async function HomeContent({
               style={{ animationDelay: `${i * 60}ms` }}
               className="animate-in fade-in slide-in-from-bottom-3 fill-mode-both"
             >
-              <SeriesCard {...s} title={getLocalizedTitle(s, locale)} />
+              <SeriesCard {...s} title={getLocalizedTitle(s, locale)} priority={i < 5} />
             </div>
           ))}
         </div>
