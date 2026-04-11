@@ -56,8 +56,9 @@ async function getSpoilerCount(typeFilter?: string) {
 }
 
 async function getTrendingSeries() {
-  return cached("home:trending", 300, () =>
-    db
+  return cached("home:trending", 300, async () => {
+    // Weighted trending: recent spoiler activity + total engagement
+    const results = await db
       .select({
         id: series.id,
         slug: series.slug,
@@ -65,11 +66,31 @@ async function getTrendingSeries() {
         type: series.type,
         status: series.status,
         coverImage: series.coverImage,
+        spoilerCount: sql<number>`COUNT(${spoilers.id})`.as("spoiler_count"),
+        totalVotes: sql<number>`COALESCE(SUM(${spoilers.upvoteCount}), 0)`.as(
+          "total_votes"
+        ),
+        // Score: recent activity (14d) weighted heavily + total engagement
+        trendScore:
+          sql<number>`(COUNT(${spoilers.id}) FILTER (WHERE ${spoilers.createdAt} >= NOW() - INTERVAL '14 days') * 500) + COALESCE(SUM(${spoilers.upvoteCount}), 0)`.as(
+            "trend_score"
+          ),
       })
       .from(series)
-      .orderBy(desc(series.createdAt))
-      .limit(10)
-  );
+      .leftJoin(spoilers, eq(spoilers.seriesId, series.id))
+      .where(eq(series.status, "ongoing"))
+      .groupBy(
+        series.id,
+        series.slug,
+        series.title,
+        series.type,
+        series.status,
+        series.coverImage
+      )
+      .orderBy(sql`trend_score DESC`)
+      .limit(10);
+    return results;
+  });
 }
 
 async function getSeriesStats() {

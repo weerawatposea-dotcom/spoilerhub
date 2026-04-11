@@ -21,8 +21,9 @@ const TYPE_DOT: Record<string, string> = {
 };
 
 async function getWeeklyUpdates() {
-  return cached("weekly-updates", 300, () =>
-    db
+  return cached("weekly-updates", 300, async () => {
+    // Try 7 days first
+    let results = await db
       .select({
         id: series.id,
         slug: series.slug,
@@ -37,8 +38,29 @@ async function getWeeklyUpdates() {
         sql`${series.latestChapter} IS NOT NULL AND ${series.latestChapterDate} >= to_char(NOW() - INTERVAL '7 days', 'YYYY-MM-DD')`
       )
       .orderBy(desc(series.latestChapterDate))
-      .limit(10)
-  );
+      .limit(12);
+
+    // If less than 5 results, extend to 30 days to ensure the section is visible
+    if (results.length < 5) {
+      results = await db
+        .select({
+          id: series.id,
+          slug: series.slug,
+          title: series.title,
+          type: series.type,
+          coverImage: series.coverImage,
+          latestChapter: series.latestChapter,
+          latestChapterDate: series.latestChapterDate,
+        })
+        .from(series)
+        .where(
+          sql`${series.latestChapter} IS NOT NULL AND ${series.latestChapterDate} >= to_char(NOW() - INTERVAL '30 days', 'YYYY-MM-DD')`
+        )
+        .orderBy(desc(series.latestChapterDate))
+        .limit(12);
+    }
+    return results;
+  });
 }
 
 
@@ -48,17 +70,25 @@ export async function WeeklyUpdate() {
 
   if (updates.length === 0) return null;
 
+  // Check if all results are within 7 days
+  const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+    .toISOString()
+    .slice(0, 10);
+  const isWeekly = updates.every(
+    (u) => u.latestChapterDate && u.latestChapterDate >= weekAgo
+  );
+
   return (
     <section>
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold flex items-center gap-2">
           <span>📅</span>
-          Weekly Updates
+          {isWeekly ? "Weekly Updates" : "Recent Updates"}
           <Badge
             variant="secondary"
             className="ml-1 text-[11px] px-2 py-0.5 font-normal"
           >
-            This Week
+            {isWeekly ? "This Week" : "Recent"}
           </Badge>
         </h2>
       </div>
